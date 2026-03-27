@@ -1,182 +1,268 @@
 import { Link } from 'react-router-dom'
-import { PawPrint, Heart, MapPin, ShoppingBag, Building2, MessageCircle, Star, Shield, Truck } from 'lucide-react'
-
-const features = [
-  {
-    icon: <MapPin className="w-8 h-8" />,
-    title: 'Mascotas Perdidas',
-    description: 'Reporta y encuentra mascotas perdidas en tu zona con nuestro mapa interactivo.',
-    color: 'bg-primary/10 text-primary',
-  },
-  {
-    icon: <Heart className="w-8 h-8" />,
-    title: 'Tinder de Mascotas',
-    description: 'Encuentra play dates y amigos peludos para tu mascota.',
-    color: 'bg-secondary/10 text-secondary',
-  },
-  {
-    icon: <ShoppingBag className="w-8 h-8" />,
-    title: 'Tienda',
-    description: 'Todo lo que tu mascota necesita con delivery a domicilio.',
-    color: 'bg-accent/20 text-amber-600',
-  },
-  {
-    icon: <Building2 className="w-8 h-8" />,
-    title: 'Descuentos',
-    description: 'Acceso exclusivo a ofertas en veterinarias, pet shops y más.',
-    color: 'bg-purple-100 text-purple-600',
-  },
-  {
-    icon: <MessageCircle className="w-8 h-8" />,
-    title: 'Chat Comunitario',
-    description: 'Conecta con otros dueños de mascotas y refugio cercanos.',
-    color: 'bg-green-100 text-green-600',
-  },
-  {
-    icon: <Star className="w-8 h-8" />,
-    title: 'Sistema de Puntos',
-    description: 'Ganá puntos por ayudar y canjealos por descuentos.',
-    color: 'bg-amber-100 text-amber-600',
-  },
-]
+import { MapPin, Heart, ShoppingBag, Star, Shield, Truck, Video, Users } from 'lucide-react'
+import { Card, Badge, Avatar } from '../components/ui'
+import { useAuth } from '../contexts/AuthContext'
 
 const stats = [
   { value: '2,500+', label: 'Mascotas Reunidas' },
-  { value: '850+', label: 'Negocios Partners' },
-  { value: '12,000+', label: 'Miembros Activos' },
-  { value: '45+', label: 'Refugios' },
+  { value: '850+', label: 'Negocios Aliados' },
+  { value: '12,000+', label: 'Miembros' },
+]
+
+const features = [
+  { 
+    icon: <MapPin className="w-7 h-7" />, 
+    title: 'Mascotas Perdidas', 
+    description: 'Reporta y encuentra mascotas en tu zona',
+    color: 'bg-red-50 text-red-500',
+    href: '/mascotas-perdidas',
+    badge: null,
+  },
+  { 
+    icon: <Heart className="w-7 h-7" />, 
+    title: 'PetoMatch', 
+    description: 'Encontrá play dates para tu peludo',
+    color: 'bg-pink-50 text-pink-500',
+    href: '/tinder',
+    badge: 'Nuevo',
+  },
+  { 
+    icon: <ShoppingBag className="w-7 h-7" />, 
+    title: 'Tienda', 
+    description: 'Productos premium con envío a domicilio',
+    color: 'bg-amber-50 text-amber-500',
+    href: '/tienda',
+    badge: null,
+  },
+  { 
+    icon: <Star className="w-7 h-7" />, 
+    title: 'Aliados', 
+    description: 'Descuentos exclusivos en tu zona',
+    color: 'bg-purple-50 text-purple-500',
+    href: '/descuentos',
+    badge: 'Premium',
+  },
+  { 
+    icon: <Video className="w-7 h-7" />, 
+    title: 'PetoDoc', 
+    description: 'Consultas veterinarias online',
+    color: 'bg-green-50 text-green-500',
+    href: '/petodoc',
+    badge: 'Pronto',
+  },
+  { 
+    icon: <Users className="w-7 h-7" />, 
+    title: 'Eventos', 
+    description: 'Participá en encuentros y ferias',
+    color: 'bg-blue-50 text-blue-500',
+    href: '/eventos',
+    badge: null,
+  },
+]
+
+const mockNearbyPets = [
+  {
+    id: '1',
+    name: 'Luna',
+    breed: 'Golden Retriever',
+    location: 'Palermo, CABA',
+    photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300',
+    status: 'lost',
+  },
+  {
+    id: '2',
+    name: 'Michi',
+    breed: 'Siamés',
+    location: 'Villa Crespo',
+    photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300',
+    status: 'found',
+  },
+  {
+    id: '3',
+    name: 'Rocky',
+    breed: 'Bulldog Francés',
+    location: 'Belgrano',
+    photo: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300',
+    status: 'lost',
+  },
 ]
 
 export function HomePage() {
+  const { user } = useAuth()
+
   return (
-    <div>
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-cream py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <PawPrint className="w-4 h-4" />
-              La comunidad pet-friendly de Argentina
-            </div>
-            <h1 className="font-nunito font-bold text-4xl md:text-5xl lg:text-6xl text-carbon leading-tight mb-6">
-              Donde cada <span className="text-primary">patita</span> importa
-            </h1>
-            <p className="text-carbon/60 text-lg md:text-xl mb-8">
-              Ayudamos a reunitar mascotas con sus familias, conectamos amantes de los animales y apoyamos a los refugios de Argentina.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/register"
-                className="bg-primary text-white px-8 py-3 rounded-xl font-semibold text-lg hover:bg-primary/90 transition shadow-lg shadow-primary/25"
-              >
-                Unirme al Club
-              </Link>
-              <Link
-                to="/mascotas-perdidas"
-                className="bg-white text-carbon border-2 border-carbon/10 px-8 py-3 rounded-xl font-semibold text-lg hover:border-primary hover:text-primary transition"
-              >
-                Ver Mascotas Perdidas
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-12 bg-white border-y border-carbon/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="font-nunito font-bold text-3xl md:text-4xl text-primary mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-carbon/60 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-nunito font-bold text-3xl md:text-4xl text-carbon mb-4">
-              Todo lo que necesitás para tu mascota
-            </h2>
-            <p className="text-carbon/60 max-w-2xl mx-auto">
-              Una comunidad completa para dueños responsables. Encontrá, conectá y cuidá a tus mascotas.
+      <section className="bg-gradient-to-br from-primary to-primary-dark text-white px-4 pt-6 pb-24 rounded-b-3xl">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="text-white/80 text-sm">
+              {user ? `¡Hola, ${user.user_metadata?.full_name?.split(' ')[0] || 'amigo'}! 👋` : 'La app de mascotas'}
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border border-carbon/5"
-              >
-                <div className={`inline-flex p-3 rounded-xl mb-4 ${feature.color}`}>
-                  {feature.icon}
-                </div>
-                <h3 className="font-nunito font-bold text-xl text-carbon mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-carbon/60 text-sm">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
+          <Avatar 
+            src={user?.user_metadata?.avatar_url} 
+            fallback={user?.user_metadata?.full_name || 'P'} 
+            size="md"
+          />
         </div>
-      </section>
+        
+        <h1 className="font-display font-extrabold text-3xl mb-2">
+          PetoClub
+        </h1>
+        <p className="text-white/80 text-base mb-6">
+          Todo para tu mascota en un solo lugar 🐾
+        </p>
 
-      {/* CTA */}
-      <section className="py-16 md:py-24 bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-nunito font-bold text-3xl md:text-4xl text-white mb-4">
-            ¿Tenés un negocio pet-friendly?
-          </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mb-8">
-            Unite a Club Patitas como partner. Mostrá tu negocio a miles de dueños de mascotas y ayudá a la comunidad.
-          </p>
-          <Link
-            to="/register?role=business"
-            className="inline-flex items-center gap-2 bg-white text-primary px-8 py-3 rounded-xl font-semibold text-lg hover:bg-cream transition"
+        {/* Quick Actions */}
+        <div className="flex gap-3">
+          <Link 
+            to="/reportar?type=lost"
+            className="flex-1 bg-white text-primary px-4 py-3 rounded-xl font-semibold text-center flex items-center justify-center gap-2"
           >
-            <Building2 className="w-5 h-5" />
-            Registrar mi Negocio
+            <span>🐕</span> Perdí mi Mascota
+          </Link>
+          <Link 
+            to="/reportar?type=found"
+            className="flex-1 bg-white/20 text-white px-4 py-3 rounded-xl font-semibold text-center flex items-center justify-center gap-2"
+          >
+            <span>🐱</span> Encontré una
           </Link>
         </div>
       </section>
 
-      {/* Trust */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="inline-flex p-4 bg-green-100 rounded-full mb-4">
-                <Shield className="w-8 h-8 text-green-600" />
+      {/* Stats */}
+      <section className="px-4 -mt-16 mb-6">
+        <Card variant="elevated" className="p-4">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <div className="font-display font-bold text-xl text-primary">
+                  {stat.value}
+                </div>
+                <div className="text-carbon-light text-xs">{stat.label}</div>
               </div>
-              <h3 className="font-nunito font-bold text-lg text-carbon mb-2">Verificación de Identidad</h3>
-              <p className="text-carbon/60 text-sm">Todos los usuarios y refugios pasan por un proceso de verificación.</p>
-            </div>
-            <div className="text-center">
-              <div className="inline-flex p-4 bg-primary/10 rounded-full mb-4">
-                <Heart className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-nunito font-bold text-lg text-carbon mb-2">10% a Refugios</h3>
-              <p className="text-carbon/60 text-sm">Un porcentaje de cada membresía y compra va directo a refugios.</p>
-            </div>
-            <div className="text-center">
-              <div className="inline-flex p-4 bg-secondary/10 rounded-full mb-4">
-                <Truck className="w-8 h-8 text-secondary" />
-              </div>
-              <h3 className="font-nunito font-bold text-lg text-carbon mb-2">Delivery en Argentina</h3>
-              <p className="text-carbon/60 text-sm">Enviamos a todo el país. Gratis en compras superiores a $8,000.</p>
-            </div>
+            ))}
           </div>
+        </Card>
+      </section>
+
+      {/* Nearby Pets */}
+      <section className="px-4 mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display font-bold text-lg text-carbon">
+            🚨 Cerca de vos
+          </h2>
+          <Link to="/mascotas-perdidas" className="text-primary text-sm font-medium">
+            Ver todas
+          </Link>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+          {mockNearbyPets.map((pet) => (
+            <Link 
+              key={pet.id} 
+              to={`/mascota/${pet.id}`}
+              className="flex-shrink-0 w-36"
+            >
+              <Card className="overflow-hidden">
+                <div className="relative h-28">
+                  <img 
+                    src={pet.photo} 
+                    alt={pet.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <Badge 
+                    variant={pet.status === 'lost' ? 'error' : 'success'}
+                    className="absolute top-2 left-2"
+                  >
+                    {pet.status === 'lost' ? '🔴 Perdida' : '🟢 Encontrada'}
+                  </Badge>
+                </div>
+                <div className="p-3">
+                  <h3 className="font-semibold text-carbon truncate">{pet.name}</h3>
+                  <p className="text-carbon-light text-xs truncate">{pet.breed}</p>
+                  <p className="text-carbon/50 text-xs mt-1 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {pet.location}
+                  </p>
+                </div>
+              </Card>
+            </Link>
+          ))}
         </div>
       </section>
+
+      {/* Features Grid */}
+      <section className="px-4 mb-6">
+        <h2 className="font-display font-bold text-lg text-carbon mb-3">
+          Explorar
+        </h2>
+        <div className="grid grid-cols-2 gap-3">
+          {features.map((feature) => (
+            <Link key={feature.title} to={feature.href}>
+              <Card className="p-4 h-full">
+                <div className={`inline-flex p-2.5 rounded-xl mb-3 ${feature.color}`}>
+                  {feature.icon}
+                </div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-carbon text-sm">{feature.title}</h3>
+                  {feature.badge && (
+                    <Badge variant={feature.badge === 'Nuevo' ? 'primary' : 'secondary'} size="sm">
+                      {feature.badge}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-carbon-light text-xs line-clamp-2">
+                  {feature.description}
+                </p>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust Section */}
+      <section className="px-4 mb-8">
+        <Card variant="outlined" className="p-4">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <Shield className="w-6 h-6 text-primary mx-auto mb-1" />
+              <p className="text-xs text-carbon-light">Verificado</p>
+            </div>
+            <div>
+              <Heart className="w-6 h-6 text-primary mx-auto mb-1" />
+              <p className="text-xs text-carbon-light">10% a Refugios</p>
+            </div>
+            <div>
+              <Truck className="w-6 h-6 text-primary mx-auto mb-1" />
+              <p className="text-xs text-carbon-light">Envío gratis*</p>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Membership CTA */}
+      {!user && (
+        <section className="px-4 mb-8">
+          <Card variant="elevated" className="p-5 bg-gradient-to-r from-primary to-primary-dark text-white">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Star className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold">Membresía Premium</h3>
+                <p className="text-white/80 text-sm">Acceso a descuentos exclusivos</p>
+              </div>
+            </div>
+            <Link 
+              to="/membresia"
+              className="block w-full bg-white text-primary py-3 rounded-xl font-semibold text-center"
+            >
+              Obtener Membresía
+            </Link>
+          </Card>
+        </section>
+      )}
     </div>
   )
 }

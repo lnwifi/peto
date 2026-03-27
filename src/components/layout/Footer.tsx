@@ -13,7 +13,7 @@ export function Footer() {
                 <PawPrint className="w-6 h-6 text-white" />
               </div>
               <span className="font-nunito font-bold text-xl text-white">
-                Club Patitas
+                PetoClub
               </span>
             </div>
             <p className="text-white/60 text-sm max-w-md">
@@ -50,7 +50,7 @@ export function Footer() {
 
         <div className="border-t border-white/10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/40 text-sm">
-            © 2026 Club Patitas. Todos los derechos reservados.
+            © 2026 PetoClub. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-4">
             <a href="mailto:hola@clubpatitas.com" className="text-white/40 hover:text-primary transition">

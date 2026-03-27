@@ -19,7 +19,7 @@ export function Navbar() {
               <PawPrint className="w-6 h-6 text-white" />
             </div>
             <span className="font-nunito font-bold text-xl text-carbon">
-              Club Patitas
+              PetoClub
             </span>
           </Link>
 
