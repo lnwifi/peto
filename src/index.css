@@ -30,10 +30,12 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
@@ -42,18 +44,18 @@ body {
   color: var(--color-carbon);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
-/* App-like transitions */
-.page-enter {
-  opacity: 0;
-  transform: translateY(8px);
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-.page-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 200ms ease-out, transform 200ms ease-out;
+/* Enable momentum scrolling on iOS */
+.overflow-y-auto, .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Custom scrollbar */
@@ -94,13 +96,34 @@ body {
 
 /* Bottom nav safe area */
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
 }
 
 /* FAB positioning */
 .fab {
   position: fixed;
-  bottom: 80px;
+  bottom: max(80px, calc(64px + env(safe-area-inset-bottom, 16px)));
   right: 20px;
   z-index: 40;
+}
+
+/* Better touch targets */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
 }

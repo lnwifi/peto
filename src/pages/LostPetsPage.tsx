@@ -1,153 +1,263 @@
-import { MapPin, Search, Filter, AlertCircle } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { MapPin, Search, Filter, Eye, X, ChevronRight } from 'lucide-react'
+import { Card, Badge, Button } from '../components/ui'
 
-// Mock data - replace with Supabase queries
+// Mock data
 const mockReports = [
   {
     id: '1',
     type: 'lost',
-    pet_name: 'Luna',
+    name: 'Luna',
     species: 'perro',
     breed: 'Golden Retriever',
     location: 'Palermo, CABA',
     date: '2026-03-26',
     photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-    description: 'Se perdió cerca del parque. Tiene collar azul con numero de contacto.',
-    status: 'active',
+    description: 'Se perdió cerca del parque. Tiene collar azul con número de contacto.',
+    views: 234,
+    owner: 'María G.',
+    phone: '+54 9 11 1234 5678',
   },
   {
     id: '2',
     type: 'found',
-    pet_name: 'Gato atigrado',
+    name: 'Gato atigrado',
     species: 'gato',
     breed: 'Doméstico',
     location: 'Villa Crespo, CABA',
     date: '2026-03-25',
     photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400',
     description: 'Gato encontrado en la calle, parece bien alimentado. Busca dueño.',
-    status: 'active',
+    views: 156,
+    owner: 'Carlos R.',
+    phone: '+54 9 11 2345 6789',
   },
   {
     id: '3',
     type: 'lost',
-    pet_name: 'Max',
+    name: 'Rocky',
     species: 'perro',
     breed: 'Labrador',
     location: 'Belgrano, CABA',
     date: '2026-03-24',
     photo: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400',
     description: 'Perro muy manso, responde al nombre Max. Se asustó con un petardo.',
-    status: 'active',
+    views: 445,
+    owner: 'Ana P.',
+    phone: '+54 9 11 3456 7890',
+  },
+  {
+    id: '4',
+    type: 'lost',
+    name: 'Nube',
+    species: 'gato',
+    breed: 'Persa',
+    location: 'Recoleta, CABA',
+    date: '2026-03-23',
+    photo: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=400',
+    description: 'Gata blanca muy mansa. Tiene cinta rosa en el collar.',
+    views: 189,
+    owner: 'Sofia L.',
+    phone: '+54 9 11 4567 8901',
   },
 ]
 
 export function LostPetsPage() {
-  const [filter, setFilter] = useState<'all' | 'lost' | 'found'>('all')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') || 'all'
+  const [search, setSearch] = useState('')
+  const [selectedReport, setSelectedReport] = useState<typeof mockReports[0] | null>(null)
 
-  const filteredReports = filter === 'all' 
-    ? mockReports 
-    : mockReports.filter(r => r.type === filter)
+  const filteredReports = mockReports.filter(r => {
+    const matchesFilter = filter === 'all' || r.type === filter
+    const matchesSearch = r.name.toLowerCase().includes(search.toLowerCase()) ||
+                          r.breed.toLowerCase().includes(search.toLowerCase()) ||
+                          r.location.toLowerCase().includes(search.toLowerCase())
+    return matchesFilter && matchesSearch
+  })
+
+  const setFilter = (newFilter: string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('filter', newFilter)
+    setSearchParams(params)
+  }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="font-nunito font-bold text-3xl text-carbon">Mascotas Perdidas</h1>
-            <p className="text-carbon/60 mt-1">Ayudá a reunitar mascotas con sus familias</p>
+    <div className="min-h-screen bg-cream">
+      {/* Search & Filter Bar */}
+      <div className="px-4 py-3 bg-white border-b border-carbon/5 sticky top-14 z-30">
+        <div className="flex gap-2 mb-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por nombre, raza o zona..."
+              className="w-full pl-10 pr-4 py-2.5 bg-carbon/5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
           </div>
-          <Link
-            to="/reportar-mascota"
-            className="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-2"
-          >
-            <AlertCircle className="w-5 h-5" />
-            Reportar Mascota
-          </Link>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-2xl p-4 mb-6 border border-carbon/5">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-carbon/60">
-              <Filter className="w-5 h-5" />
-              <span className="text-sm font-medium">Filtrar:</span>
-            </div>
-            <div className="flex gap-2">
-              {(['all', 'lost', 'found'] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
-                    filter === f
-                      ? 'bg-primary text-white'
-                      : 'bg-carbon/5 text-carbon/70 hover:bg-carbon/10'
-                  }`}
-                >
-                  {f === 'all' ? 'Todos' : f === 'lost' ? 'Perdidas' : 'Encontradas'}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Map placeholder */}
-        <div className="bg-secondary/10 rounded-2xl p-8 mb-6 text-center border border-secondary/20">
-          <MapPin className="w-12 h-12 text-secondary mx-auto mb-4" />
-          <h3 className="font-nunito font-bold text-lg text-carbon mb-2">Mapa de tu zona</h3>
-          <p className="text-carbon/60 text-sm">
-            Visualizá todas las mascotas perdidas y encontradas en tu área
-          </p>
-          <button className="mt-4 bg-secondary text-white px-6 py-2 rounded-xl text-sm font-medium">
-            Ver mapa completo
+          <button className="w-10 h-10 bg-carbon/5 rounded-xl flex items-center justify-center">
+            <Filter className="w-5 h-5 text-carbon/60" />
           </button>
         </div>
-
-        {/* Reports Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredReports.map((report) => (
-            <div key={report.id} className="bg-white rounded-2xl overflow-hidden border border-carbon/5 hover:shadow-md transition">
-              <div className="relative h-48">
-                <img
-                  src={report.photo}
-                  alt={report.pet_name}
-                  className="w-full h-full object-cover"
-                />
-                <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold ${
-                  report.type === 'lost' 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-green-500 text-white'
-                }`}>
-                  {report.type === 'lost' ? '🔴 Perdida' : '🟢 Encontrada'}
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-nunito font-bold text-lg text-carbon">{report.pet_name}</h3>
-                <p className="text-carbon/60 text-sm">{report.breed}</p>
-                <div className="flex items-center gap-1 text-carbon/50 text-sm mt-2">
-                  <MapPin className="w-4 h-4" />
-                  {report.location}
-                </div>
-                <p className="text-carbon/70 text-sm mt-3 line-clamp-2">{report.description}</p>
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-carbon/5">
-                  <span className="text-xs text-carbon/40">{report.date}</span>
-                  <button className="text-primary text-sm font-medium hover:underline">
-                    Ver detalles →
-                  </button>
-                </div>
-              </div>
-            </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {[
+            { value: 'all', label: 'Todos', emoji: '🐾' },
+            { value: 'lost', label: 'Perdidas', emoji: '🔴' },
+            { value: 'found', label: 'Encontradas', emoji: '🟢' },
+          ].map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                filter === f.value
+                  ? 'bg-primary text-white'
+                  : 'bg-carbon/5 text-carbon/70'
+              }`}
+            >
+              {f.emoji} {f.label}
+            </button>
           ))}
         </div>
+      </div>
+
+      {/* Map Placeholder */}
+      <div className="px-4 py-3">
+        <Card className="p-3 bg-gradient-to-r from-secondary/20 to-secondary/10 border border-secondary/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-secondary" />
+              <span className="font-medium text-carbon text-sm">Ver en mapa</span>
+            </div>
+            <Button size="sm" variant="secondary">
+              Abrir mapa
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Reports List */}
+      <div className="px-4 space-y-3 pb-20">
+        {filteredReports.map((report) => (
+          <Card 
+            key={report.id} 
+            className="p-0 overflow-hidden"
+            onClick={() => setSelectedReport(report)}
+          >
+            <div className="flex">
+              <div className="relative w-28 h-28 flex-shrink-0">
+                <img
+                  src={report.photo}
+                  alt={report.name}
+                  className="w-full h-full object-cover"
+                />
+                <Badge 
+                  variant={report.type === 'lost' ? 'error' : 'success'}
+                  className="absolute top-2 left-2 text-xs"
+                >
+                  {report.type === 'lost' ? 'Perdida' : 'Encontrada'}
+                </Badge>
+              </div>
+              <div className="flex-1 p-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-carbon">{report.name}</h3>
+                    <p className="text-xs text-carbon/60">{report.breed}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-carbon/40 text-xs">
+                    <Eye className="w-3 h-3" />
+                    {report.views}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-carbon/50 mt-1">
+                  <MapPin className="w-3 h-3" />
+                  {report.location}
+                </div>
+                <p className="text-xs text-carbon/60 mt-1 line-clamp-1">{report.description}</p>
+              </div>
+              <div className="flex items-center pr-2">
+                <ChevronRight className="w-5 h-5 text-carbon/30" />
+              </div>
+            </div>
+          </Card>
+        ))}
 
         {filteredReports.length === 0 && (
           <div className="text-center py-12">
-            <Search className="w-12 h-12 text-carbon/20 mx-auto mb-4" />
-            <p className="text-carbon/60">No hay reportes en esta categoría</p>
+            <span className="text-5xl">🔍</span>
+            <p className="text-carbon/60 mt-4">No hay reportes en esta categoría</p>
           </div>
         )}
       </div>
+
+      {/* Report Detail Modal */}
+      {selectedReport && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 flex items-end"
+          onClick={() => setSelectedReport(null)}
+        >
+          <div 
+            className="bg-white w-full rounded-t-3xl max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-white p-4 border-b border-carbon/5 flex items-center justify-between">
+              <h2 className="font-display font-bold text-lg">{selectedReport.name}</h2>
+              <button 
+                onClick={() => setSelectedReport(null)}
+                className="w-8 h-8 bg-carbon/5 rounded-full flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="p-4">
+              <img
+                src={selectedReport.photo}
+                alt={selectedReport.name}
+                className="w-full h-64 object-cover rounded-2xl mb-4"
+              />
+              
+              <div className="flex gap-2 mb-4">
+                <Badge variant={selectedReport.type === 'lost' ? 'error' : 'success'} size="md">
+                  {selectedReport.type === 'lost' ? '🔴 Perdida' : '🟢 Encontrada'}
+                </Badge>
+                <Badge variant="default">{selectedReport.breed}</Badge>
+              </div>
+
+              <p className="text-carbon/70 mb-4">{selectedReport.description}</p>
+
+              <div className="space-y-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-carbon/40" />
+                  <span className="text-carbon">{selectedReport.location}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-carbon/40">📅</span>
+                  <span className="text-carbon">{selectedReport.date}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-carbon/40">👤</span>
+                  <span className="text-carbon">{selectedReport.owner}</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <a 
+                  href={`tel:${selectedReport.phone}`}
+                  className="block w-full bg-primary text-white py-3 rounded-xl font-semibold text-center"
+                >
+                  📞 Llamar a {selectedReport.owner}
+                </a>
+                <Button variant="outline" fullWidth>
+                  💬 Enviar mensaje
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
