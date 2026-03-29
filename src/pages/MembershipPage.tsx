@@ -1,29 +1,30 @@
-import { Check, Star, Crown, Sparkles } from 'lucide-react'
+import { Check, Star, Crown } from 'lucide-react'
 import { Card, Button, Badge } from '../components/ui'
 
 const plans = [
   {
     id: 'monthly',
-    name: 'Mensual',
-    price: 1990,
+    name: 'PetoClub+ Mensual',
+    price: 2900,
     period: 'mes',
-    description: 'Perfecto para empezar',
+    description: 'Todos los beneficios',
     features: [
       'Acceso a todos los descuentos',
       '5% de cashback en compras',
-      'Puntos dobles por actividad',
+      'Reportes destacados gratis',
+      'Puntos triples por actividad',
       'Soporte prioritario',
     ],
     highlighted: false,
   },
   {
     id: 'yearly',
-    name: 'Anual',
-    price: 1590,
-    period: 'mes',
-    description: 'Ahorrá 20%',
+    name: 'PetoClub+ Anual',
+    price: 24900,
+    period: 'año',
+    description: 'Ahorrá 28%',
     features: [
-      'Todo lo del plan Mensual',
+      'Todo lo de Mensual',
       '2 meses gratis',
       'Acceso anticipado a eventos',
       'Badge exclusivo en perfil',
@@ -42,16 +43,19 @@ const freeFeatures = [
 
 export function MembershipPage() {
   return (
-    <div className="px-4 py-4">
+    <div className="min-h-screen px-4 py-6 pb-24">
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-primary to-primary-dark rounded-2xl mb-4">
+        <div 
+          className="inline-flex items-center justify-center p-4 rounded-2xl mb-4"
+          style={{ background: '#331B7E' }}
+        >
           <Crown className="w-8 h-8 text-white" />
         </div>
-        <h1 className="font-display font-bold text-2xl text-carbon mb-2">
-          Membresía PetoClub
+        <h1 className="font-display font-bold text-2xl sm:text-3xl text-carbon mb-2">
+          PetoClub+
         </h1>
-        <p className="text-carbon-light">
+        <p className="text-carbon-light text-sm sm:text-base">
           Desbloqueá beneficios exclusivos para vos y tu mascota
         </p>
       </div>
@@ -59,14 +63,14 @@ export function MembershipPage() {
       {/* Free vs Premium */}
       <div className="grid grid-cols-2 gap-3 mb-6">
         <Card className="p-4 text-center border-2 border-transparent opacity-60">
-          <Sparkles className="w-6 h-6 text-carbon/30 mx-auto mb-2" />
+          <Star className="w-6 h-6 text-carbon/30 mx-auto mb-2" />
           <h3 className="font-semibold text-carbon text-sm mb-1">Gratis</h3>
           <p className="text-xs text-carbon-light">Uso básico</p>
         </Card>
         <Card className="p-4 text-center border-2 border-primary bg-primary/5">
-          <Star className="w-6 h-6 text-primary mx-auto mb-2" />
-          <h3 className="font-semibold text-primary text-sm mb-1">Premium</h3>
-          <p className="text-xs text-primary">Beneficios exclusivos</p>
+          <Star className="w-6 h-6 mx-auto mb-2" style={{ color: '#331B7E' }} />
+          <h3 className="font-semibold text-sm mb-1" style={{ color: '#331B7E' }}>Premium</h3>
+          <p className="text-xs" style={{ color: '#331B7E' }}>Beneficios exclusivos</p>
         </Card>
       </div>
 
@@ -82,7 +86,7 @@ export function MembershipPage() {
           <ul className="space-y-2">
             {freeFeatures.map((feature, i) => (
               <li key={i} className="flex items-center gap-2 text-sm text-carbon-light">
-                <Check className="w-4 h-4 text-carbon/30" />
+                <Check className="w-4 h-4 text-carbon/30 flex-shrink-0" />
                 {feature}
               </li>
             ))}
@@ -95,18 +99,18 @@ export function MembershipPage() {
             key={plan.id}
             className={`p-4 mb-3 ${plan.highlighted ? 'border-2 border-primary' : ''}`}
           >
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-semibold text-carbon">{plan.name}</h3>
                   {plan.highlighted && (
-                    <Badge variant="primary">Más popular</Badge>
+                    <Badge variant="primary" size="sm">Más popular</Badge>
                   )}
                 </div>
                 <p className="text-xs text-carbon-light">{plan.description}</p>
               </div>
-              <div className="text-right">
-                <span className="font-bold text-xl text-primary">
+              <div className="text-left sm:text-right">
+                <span className="font-bold text-xl" style={{ color: '#331B7E' }}>
                   ${plan.price.toLocaleString('es-AR')}
                 </span>
                 <span className="text-carbon-light text-xs">/{plan.period}</span>
@@ -115,8 +119,8 @@ export function MembershipPage() {
             <ul className="space-y-2">
               {plan.features.map((feature, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-carbon">
-                  <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary" />
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(51,27,126,0.1)' }}>
+                    <Check className="w-3 h-3" style={{ color: '#331B7E' }} />
                   </div>
                   {feature}
                 </li>
@@ -137,7 +141,7 @@ export function MembershipPage() {
       </div>
 
       {/* Trust */}
-      <div className="mt-8 p-4 bg-carbon/5 rounded-2xl">
+      <div className="mt-8 p-4 rounded-2xl" style={{ background: 'rgba(51,27,126,0.05)' }}>
         <h3 className="font-semibold text-carbon text-sm mb-3 text-center">
           💝 10% de cada membresía va a refugios
         </h3>

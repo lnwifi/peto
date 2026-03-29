@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { PawPrint, User, Menu, X, Heart, ShoppingBag, MapPin, MessageCircle } from 'lucide-react'
+import { User, Menu, X, Heart, ShoppingBag, MapPin, MessageCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 
@@ -15,12 +15,7 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="bg-primary rounded-xl p-2">
-              <PawPrint className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-nunito font-bold text-xl text-carbon">
-              PetoClub
-            </span>
+            <img src="/logo.png" alt="PetoClub" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop Nav */}

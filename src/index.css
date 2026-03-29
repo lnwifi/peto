@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FF6B6B;
-  --color-primary-dark: #E85555;
-  --color-secondary: #4ECDC4;
-  --color-secondary-dark: #3DBDB5;
-  --color-accent: #FFE66D;
-  --color-cream: #FFF9F0;
+  /* PetoClub Brand Colors - Identity Only */
+  --color-primary: #331B7E;
+  --color-accent: #FFCF5C;
+  --color-secondary: #F27131;
+  --color-text: #BEBAE0;
+  
+  /* Standard Light Background */
+  --color-cream: #F8F6FF;
+  --color-white: #FFFFFF;
   --color-carbon: #2D3436;
   --color-carbon-light: #636E72;
+  --color-error: #CF5B55;
   --color-success: #27AE60;
-  --color-error: #E74C3C;
-  --color-warning: #F39C12;
+  --color-warning: #FFE66D;
   
   --font-display: 'Nunito', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
@@ -25,7 +28,7 @@
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
-  --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+  --shadow-card: 0 4px 20px rgba(51,27,126,0.1);
 }
 
 * {

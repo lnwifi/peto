@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Bell, Search, Plus } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
 
 const pageTitles: Record<string, string> = {
   '/': 'PetoClub',
@@ -16,43 +15,49 @@ const pageTitles: Record<string, string> = {
 
 export function Header() {
   const location = useLocation()
-  const { user } = useAuth()
   
   const pageTitle = pageTitles[location.pathname] || 'PetoClub'
   const showPlusButton = ['/mascotas-perdidas'].includes(location.pathname)
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-lg border-b border-carbon/5">
+    <header 
+      className="sticky top-0 z-40 bg-white backdrop-blur-lg shadow-sm"
+    >
       <div className="px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {pageTitle !== 'PetoClub' && location.pathname !== '/' && (
-            <button onClick={() => window.history.back()} className="text-carbon-light hover:text-carbon transition">
+            <button 
+              onClick={() => window.history.back()} 
+              className="text-carbon-light hover:text-carbon transition"
+            >
               ←
             </button>
           )}
-          <h1 className="font-display font-bold text-xl text-carbon">
-            {pageTitle}
-          </h1>
+          <img src="/logo.png" alt="PetoClub" className="h-8" />
+          {pageTitle !== 'PetoClub' && (
+            <h1 className="font-display font-bold text-xl text-carbon">
+              {pageTitle}
+            </h1>
+          )}
         </div>
         
         <div className="flex items-center gap-2">
           {showPlusButton && (
             <Link 
               to="/reportar"
-              className="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary-dark transition"
+              className="w-9 h-9 rounded-full flex items-center justify-center shadow-md transition hover:scale-105"
+              style={{ background: '#F27131' }}
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-5 h-5 text-white" />
             </Link>
           )}
-          <button className="w-9 h-9 bg-carbon/5 rounded-full flex items-center justify-center hover:bg-carbon/10 transition">
+          <button className="w-9 h-9 rounded-full flex items-center justify-center bg-carbon/5 hover:bg-carbon/10 transition">
             <Search className="w-5 h-5 text-carbon-light" />
           </button>
-          {user && (
-            <button className="w-9 h-9 bg-carbon/5 rounded-full flex items-center justify-center hover:bg-carbon/10 transition relative">
-              <Bell className="w-5 h-5 text-carbon-light" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
-            </button>
-          )}
+          <button className="w-9 h-9 rounded-full flex items-center justify-center bg-carbon/5 hover:bg-carbon/10 transition relative">
+            <Bell className="w-5 h-5 text-carbon-light" />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ background: '#F27131' }} />
+          </button>
         </div>
       </div>
     </header>

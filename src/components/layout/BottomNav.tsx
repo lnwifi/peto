@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Home, Map, Heart, ShoppingBag, User } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
 
 const navItems = [
   { path: '/', icon: Home, label: 'Inicio' },
@@ -12,10 +11,11 @@ const navItems = [
 
 export function BottomNav() {
   const location = useLocation()
-  useAuth() // Will be used for auth checks later
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-carbon/10 z-50 pb-safe">
+    <nav 
+      className="fixed bottom-0 left-0 right-0 z-50 pb-safe bg-white shadow-lg"
+    >
       <div className="flex items-center justify-around h-16">
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path || 
@@ -29,12 +29,12 @@ export function BottomNav() {
                 isActive ? 'text-primary' : 'text-carbon-light'
               }`}
             >
-              <div className={`relative p-1.5 rounded-xl transition-all ${
-                isActive ? 'bg-primary/10' : ''
+              <div className={`p-1.5 rounded-xl transition-all ${
+                isActive ? 'bg-[#FFCF5C]/20' : ''
               }`}>
                 <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5]' : ''}`} />
               </div>
-              <span className={`text-[10px] font-medium mt-0.5 ${isActive ? 'text-primary' : ''}`}>
+              <span className={`text-[10px] font-medium mt-0.5 ${isActive ? 'text-primary font-semibold' : ''}`}>
                 {label}
               </span>
             </Link>

@@ -3,6 +3,7 @@ import { MapPin, Star, Search, Ticket } from 'lucide-react'
 import { Card, Badge, Button } from '../components/ui'
 
 // Mock discounts data
+// NOTE: A business only appears in the app if it has at least 1 active discount
 const mockAliados = [
   {
     id: '1',
@@ -11,7 +12,7 @@ const mockAliados = [
     address: 'Av. Santa Fe 1234, Palermo',
     rating: 4.8,
     reviews: 234,
-    discount: 20,
+    discount: 20, // Has active discount
     discountTitle: '20% OFF en consultas',
     code: 'PATITAS20',
     validUntil: '2026-04-30',
@@ -25,7 +26,7 @@ const mockAliados = [
     address: 'Av. Corrientes 5678, Belgrano',
     rating: 4.5,
     reviews: 156,
-    discount: 15,
+    discount: 15, // Has active discount
     discountTitle: '15% OFF en alimentos premium',
     code: 'PREMIO15',
     validUntil: '2026-05-15',
@@ -39,7 +40,7 @@ const mockAliados = [
     address: 'Defensa 890, San Telmo',
     rating: 4.7,
     reviews: 89,
-    discount: 10,
+    discount: 10, // Has active discount
     discountTitle: '10% OFF en todo',
     code: 'CAFEPET10',
     validUntil: '2026-06-30',
@@ -53,11 +54,25 @@ const mockAliados = [
     address: 'Juramento 234, Núñez',
     rating: 4.9,
     reviews: 312,
-    discount: 25,
-    discountTitle: '2x1 en grooming',
-    code: 'STYLE25',
-    validUntil: '2026-04-15',
+    discount: 0, // NO active discount - won't show in app
+    discountTitle: '',
+    code: '',
+    validUntil: '',
     logo: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=100',
+    featured: false,
+  },
+  {
+    id: '5',
+    name: 'Veterinaria San Martín',
+    category: 'veterinaria',
+    address: 'Av. San Martín 890, Flores',
+    rating: 4.2,
+    reviews: 67,
+    discount: 0, // NO active discount - won't show in app
+    discountTitle: '',
+    code: '',
+    validUntil: '',
+    logo: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=100',
     featured: false,
   },
 ]
@@ -84,11 +99,13 @@ export function DiscountsPage() {
   const [search, setSearch] = useState('')
   const [showMap, setShowMap] = useState(false)
 
+  // Only show businesses that have at least 1 active discount
   const filteredAliados = mockAliados.filter(a => {
+    const hasActiveDiscount = a.discount > 0 // Mock: business has active discount
     const matchesCategory = category === 'all' || a.category === category
     const matchesSearch = a.name.toLowerCase().includes(search.toLowerCase()) ||
                           a.address.toLowerCase().includes(search.toLowerCase())
-    return matchesCategory && matchesSearch
+    return hasActiveDiscount && matchesCategory && matchesSearch
   })
 
   return (
@@ -135,7 +152,7 @@ export function DiscountsPage() {
       {/* Map View */}
       {showMap && (
         <div className="px-4 pb-3">
-          <Card className="h-48 bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center border border-secondary/30">
+          <Card className="h-48 flex items-center justify-center border border-secondary/30" style={{ background: 'rgba(242,113,49,0.1)' }}>
             <div className="text-center">
               <MapPin className="w-8 h-8 text-secondary mx-auto mb-2" />
               <p className="text-carbon font-medium">Mapa de aliados</p>
@@ -147,7 +164,7 @@ export function DiscountsPage() {
 
       {/* Premium Banner */}
       <div className="px-4 pb-3">
-        <Card className="p-4 bg-gradient-to-r from-primary to-primary-dark text-white">
+        <Card className="p-4 text-white" style={{ background: '#331B7E' }}>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
               <Star className="w-6 h-6" />
@@ -172,7 +189,7 @@ export function DiscountsPage() {
         <div className="px-4 pb-3">
           <h2 className="font-display font-bold text-lg text-carbon mb-3">⭐ Destacados</h2>
           <div className="grid grid-cols-1 gap-3">
-            {mockAliados.filter(a => a.featured).map((aliado) => (
+            {mockAliados.filter(a => a.featured && a.discount > 0).map((aliado) => (
               <Card key={aliado.id} className="p-4">
                 <div className="flex gap-3">
                   <img 

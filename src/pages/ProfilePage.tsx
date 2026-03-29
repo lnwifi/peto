@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { User, MapPin, Heart, ShoppingBag, Settings, LogOut, Crown, ChevronRight, Plus, Edit2 } from 'lucide-react'
+import { User, MapPin, Heart, ShoppingBag, Settings, LogOut, Crown, ChevronRight, Plus, Edit2, Stethoscope } from 'lucide-react'
 import { Card, Badge, Button, Avatar } from '../components/ui'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -67,7 +67,7 @@ export function ProfilePage() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Profile Header */}
-      <div className="bg-gradient-to-br from-primary to-primary-dark text-white px-4 pt-6 pb-20 rounded-b-3xl">
+      <div className="text-white px-4 pt-6 pb-20 rounded-b-3xl" style={{ background: '#331B7E' }}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display font-bold text-xl">Mi Perfil</h1>
           <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -135,13 +135,13 @@ export function ProfilePage() {
       {/* Membership CTA */}
       {!profile.isMember && (
         <div className="px-4 pb-4">
-          <Card className="p-4 bg-gradient-to-r from-primary to-primary-dark text-white">
+          <Card className="p-4 text-white" style={{ background: '#F27131' }}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                 <Crown className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold">Membresía Premium</h3>
+                <h3 className="font-semibold">PetoClub+</h3>
                 <p className="text-white/80 text-sm">Accedé a descuentos exclusivos</p>
               </div>
               <Button 
@@ -227,12 +227,23 @@ export function ProfilePage() {
             <ChevronRight className="w-5 h-5 text-carbon/30" />
           </Link>
 
+          <Link to="/carnet-salud" className="flex items-center gap-4 p-4 hover:bg-carbon/5 transition border-t border-carbon/5">
+            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+              <Stethoscope className="w-5 h-5 text-green-500" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-carbon">Carnet de Salud</p>
+              <p className="text-xs text-carbon/60">Vacunas, desparasitación y más</p>
+            </div>
+            <Badge variant="success" size="sm">⭐ PRO</Badge>
+          </Link>
+
           <Link to="/membresia" className="flex items-center gap-4 p-4 hover:bg-carbon/5 transition border-t border-carbon/5">
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <Crown className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
-              <p className="font-medium text-carbon">Membresía</p>
+              <p className="font-medium text-carbon">PetoClub+</p>
               <p className="text-xs text-carbon/60">Gestionar suscripción</p>
             </div>
             <ChevronRight className="w-5 h-5 text-carbon/30" />

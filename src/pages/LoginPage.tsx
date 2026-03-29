@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { PawPrint, Mail, Lock, Eye, EyeOff } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Card, Button } from '../components/ui'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const { signIn, signInWithGoogle } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -16,107 +15,113 @@ export function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    try {
-      await signIn(email, password)
-      navigate('/')
-    } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión')
-    } finally {
+    
+    setTimeout(() => {
+      if (email && password) {
+        localStorage.setItem('petoclub_user', JSON.stringify({
+          email,
+          name: email.split('@')[0],
+          points: 100,
+          memberSince: null,
+        }))
+        navigate('/')
+      } else {
+        setError('Por favor completá todos los campos')
+      }
       setLoading(false)
-    }
+    }, 1000)
   }
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setError('')
     setLoading(true)
-    try {
-      await signInWithGoogle()
+    setTimeout(() => {
+      localStorage.setItem('petoclub_user', JSON.stringify({
+        email: 'usuario@gmail.com',
+        name: 'Usuario Google',
+        points: 100,
+        memberSince: null,
+      }))
       navigate('/')
-    } catch (err: any) {
-      setError(err.message || 'Error con Google')
-    } finally {
-      setLoading(false)
-    }
+    }, 1500)
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-carbon/5 w-full max-w-md p-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-cream">
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-xl mb-4">
-            <PawPrint className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="font-nunito font-bold text-2xl text-carbon">¡Bienvenido de vuelta!</h1>
-          <p className="text-carbon/60 text-sm mt-2">Iniciá sesión para continuar en Club Patitas</p>
+          <img src="/logo.png" alt="PetoClub" className="h-16 mx-auto mb-4" />
+          <h1 className="font-display font-bold text-2xl text-carbon">¡Bienvenido!</h1>
+          <p className="text-carbon-light text-sm mt-1">Iniciá sesión para continuar</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl mb-6">
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl mb-4 text-center">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-carbon mb-2">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
-                required
-                className="w-full pl-10 pr-4 py-3 border border-carbon/10 rounded-xl focus:outline-none focus:border-primary transition"
-              />
+        <Card className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-carbon mb-2">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tu@email.com"
+                  className="w-full pl-10 pr-4 py-3 border border-carbon/10 rounded-xl focus:outline-none focus:border-primary transition text-sm"
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-carbon mb-2">Contraseña</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full pl-10 pr-12 py-3 border border-carbon/10 rounded-xl focus:outline-none focus:border-primary transition"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon/40 hover:text-carbon/60"
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+            <div>
+              <label className="block text-sm font-medium text-carbon mb-2">Contraseña</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-12 py-3 border border-carbon/10 rounded-xl focus:outline-none focus:border-primary transition text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon/40"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition disabled:opacity-50"
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
-        </form>
+            <div className="text-right">
+              <Link to="/recuperar" className="text-sm font-medium" style={{ color: '#331B7E' }}>
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
 
-        <div className="mt-6">
-          <div className="relative">
+            <Button type="submit" fullWidth size="lg" disabled={loading}>
+              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            </Button>
+          </form>
+
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-carbon/10"></div>
+              <div className="w-full border-t border-carbon/10" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-carbon/40">o continuar con</span>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-4 text-sm text-carbon/40">o</span>
             </div>
           </div>
 
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full mt-4 border border-carbon/10 py-3 rounded-xl font-medium text-carbon hover:bg-carbon/5 transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full border border-carbon/10 py-3 rounded-xl font-medium text-carbon hover:bg-carbon/5 transition flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -124,14 +129,20 @@ export function LoginPage() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Google
+            Continuar con Google
           </button>
-        </div>
 
-        <p className="text-center text-carbon/60 text-sm mt-6">
-          ¿No tenés cuenta?{' '}
-          <Link to="/register" className="text-primary font-medium hover:underline">
-            Registrate
+          <p className="text-center text-carbon/60 text-sm mt-6">
+            ¿No tenés cuenta?{' '}
+            <Link to="/register" className="font-semibold" style={{ color: '#331B7E' }}>
+              Registrate
+            </Link>
+          </p>
+        </Card>
+
+        <p className="text-center mt-6">
+          <Link to="/" className="text-sm text-carbon/50 hover:underline">
+            ← Volver al inicio
           </Link>
         </p>
       </div>

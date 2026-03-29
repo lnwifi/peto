@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { MapPin, Camera, Calendar, X } from 'lucide-react'
+import { MapPin, Camera, Calendar, X, Star } from 'lucide-react'
 import { Card, Button, Badge } from '../components/ui'
+import { LocationPicker } from '../components/ui/Map'
 
 export function ReportPage() {
   const navigate = useNavigate()
@@ -17,7 +18,9 @@ export function ReportPage() {
     date: new Date().toISOString().split('T')[0],
     phone: '',
     photo: null as string | null,
+    isFeatured: false,
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -30,17 +33,26 @@ export function ReportPage() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // In real app, this would save to Supabase
-    alert('Reporte enviado! (Demo - Supabase no conectado aún)')
+    setIsSubmitting(true)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    if (form.isFeatured) {
+      alert('¡Reporte destacado! Los usuarios cercanos serán notificados. (Demo - Mercado Pago no conectado aún)')
+    } else {
+      alert('Reporte publicado! Los usuarios en tu zona serán notificados. (Demo - Supabase no conectado aún)')
+    }
+    
     navigate('/mascotas-perdidas')
   }
 
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary to-primary-dark text-white px-4 pt-6 pb-8 rounded-b-3xl">
+      <div className="text-white px-4 pt-6 pb-8 rounded-b-3xl" style={{ background: '#331B7E' }}>
         <div className="flex items-center justify-between mb-4">
           <button 
             onClick={() => navigate(-1)}
@@ -192,9 +204,14 @@ export function ReportPage() {
               />
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
             </div>
-            {/* Map placeholder */}
-            <div className="mt-2 h-32 bg-secondary/10 rounded-xl flex items-center justify-center">
-              <span className="text-secondary text-sm">📍 Mapa interactivo (próximamente)</span>
+            {/* Map */}
+            <div className="mt-2">
+              <LocationPicker
+                onChange={(location) => setForm(prev => ({ 
+                  ...prev, 
+                  address: location.address || `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`
+                }))}
+              />
             </div>
           </div>
 
@@ -212,9 +229,40 @@ export function ReportPage() {
             />
           </div>
 
+          {/* Destacar Opcion */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => setForm(prev => ({ ...prev, isFeatured: !prev.isFeatured }))}
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition ${
+                  form.isFeatured 
+                    ? 'bg-amber-400 border-amber-400' 
+                    : 'border-carbon/30 hover:border-amber-400'
+                }`}
+              >
+                {form.isFeatured && (
+                  <Star className="w-4 h-4 text-white fill-white" />
+                )}
+              </button>
+              <div className="flex-1">
+                <h4 className="font-semibold text-carbon flex items-center gap-2">
+                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  Destacar mi reporte
+                </h4>
+                <p className="text-xs text-carbon/60 mt-1">
+                  Tu reporte aparecerá arriba de todo, con badge especial y <strong>notificará a más usuarios</strong> en tu zona.
+                </p>
+                <p className="text-sm font-bold text-carbon mt-2" style={{ color: '#331B7E' }}>
+                  $200 ARS
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Submit */}
-          <Button type="submit" fullWidth size="lg" className="mt-4">
-            Publicar Reporte
+          <Button type="submit" fullWidth size="lg" className="mt-4" disabled={isSubmitting}>
+            {isSubmitting ? 'Publicando...' : 'Publicar Reporte'}
           </Button>
         </Card>
       </form>

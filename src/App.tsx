@@ -5,6 +5,7 @@ import { Header } from './components/layout/Header'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LostPetsPage } from './pages/LostPetsPage'
 import { ReportPage } from './pages/ReportPage'
 import { TinderPage } from './pages/TinderPage'
@@ -14,21 +15,26 @@ import { DiscountsPage } from './pages/DiscountsPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { ChatPage } from './pages/ChatPage'
 import { MembershipPage } from './pages/MembershipPage'
+import { OnboardingPage } from './pages/OnboardingPage'
+import { AchievementsPage } from './pages/AchievementsPage'
+import { HealthCarnetPage } from './pages/HealthCarnetPage'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 function AppContent() {
   const location = useLocation()
-  const isAuthPage = ['/login', '/register'].includes(location.pathname)
+  const isAuthPage = ['/login', '/register', '/onboarding'].includes(location.pathname)
   const isReportPage = location.pathname === '/reportar'
 
   return (
-    <div className="min-h-screen bg-cream pb-20 md:pb-0">
+    <div className="min-h-screen pb-20 md:pb-0 bg-cream">
       {!isAuthPage && !isReportPage && <Header />}
-      <main className={isAuthPage ? '' : ''}>
+      <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/recuperar" element={<ForgotPasswordPage />} />
+          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/mascotas-perdidas" element={<LostPetsPage />} />
           <Route path="/reportar" element={<ReportPage />} />
           <Route path="/tinder" element={<TinderPage />} />
@@ -38,6 +44,8 @@ function AppContent() {
           <Route path="/perfil" element={<ProfilePage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/membresia" element={<MembershipPage />} />
+          <Route path="/logros" element={<AchievementsPage />} />
+          <Route path="/carnet-salud" element={<HealthCarnetPage />} />
         </Routes>
       </main>
       {!isAuthPage && !isReportPage && <BottomNav />}

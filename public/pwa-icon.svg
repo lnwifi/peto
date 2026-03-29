@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#331B7E"/>
+  <g fill="white">
+    <!-- Paw print -->
+    <ellipse cx="256" cy="340" rx="80" ry="60"/>
+    <ellipse cx="180" cy="240" rx="35" ry="45"/>
+    <ellipse cx="332" cy="240" rx="35" ry="45"/>
+    <ellipse cx="140" cy="320" rx="30" ry="35"/>
+    <ellipse cx="372" cy="320" rx="30" ry="35"/>
+  </g>
+</svg>

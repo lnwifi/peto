@@ -3,20 +3,22 @@ import type { ReactNode } from 'react'
 interface CardProps {
   children: ReactNode
   className?: string
+  style?: React.CSSProperties
   onClick?: () => void
   variant?: 'default' | 'elevated' | 'outlined'
 }
 
-export function Card({ children, className = '', onClick, variant = 'default' }: CardProps) {
+export function Card({ children, className = '', style, onClick, variant = 'default' }: CardProps) {
   const variants = {
     default: 'bg-white border border-carbon/5',
     elevated: 'bg-white shadow-card',
-    outlined: 'bg-transparent border-2 border-carbon/10',
+    outlined: 'bg-transparent border-2 border-primary/20',
   }
 
   return (
     <div 
       className={`rounded-2xl ${variants[variant]} ${onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform' : ''} ${className}`}
+      style={style}
       onClick={onClick}
     >
       {children}
@@ -46,8 +48,8 @@ export function Button({
   className = ''
 }: ButtonProps) {
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary-dark shadow-sm',
-    secondary: 'bg-secondary text-white hover:bg-secondary-dark',
+    primary: 'bg-primary text-white hover:bg-[#2A1669] shadow-sm',
+    secondary: 'bg-secondary text-white hover:bg-[#D65F25]',
     outline: 'bg-transparent border-2 border-primary text-primary hover:bg-primary/5',
     ghost: 'bg-transparent text-carbon hover:bg-carbon/5',
     danger: 'bg-error text-white hover:bg-red-600',
@@ -88,10 +90,10 @@ interface BadgeProps {
 export function Badge({ children, variant = 'default', size = 'sm', className = '' }: BadgeProps) {
   const variants = {
     default: 'bg-carbon/10 text-carbon',
-    primary: 'bg-primary/10 text-primary',
-    secondary: 'bg-secondary/10 text-secondary',
+    primary: 'bg-primary text-white',
+    secondary: 'bg-secondary text-white',
     success: 'bg-success/10 text-success',
-    warning: 'bg-warning/10 text-warning',
+    warning: 'bg-[#FFCF5C] text-primary',
     error: 'bg-error/10 text-error',
   }
 
@@ -134,7 +136,10 @@ export function Avatar({ src, alt = '', size = 'md', fallback, className = '' }:
   }
 
   return (
-    <div className={`${sizes[size]} rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center ${className}`}>
+    <div 
+      className={`${sizes[size]} rounded-full font-bold flex items-center justify-center ${className}`}
+      style={{ background: '#FFCF5C', color: '#331B7E' }}
+    >
       {fallback || alt.charAt(0).toUpperCase()}
     </div>
   )
