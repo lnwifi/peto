@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft, CheckCircle, Lock } from 'lucide-react'
 import { Card, Button } from '../components/ui'
 
 export function ForgotPasswordPage() {
-  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)

@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
-  Store, Heart, Shield, Users, Package, MapPin, Star, 
-  TrendingUp, Eye, Edit2, Plus, Trash2, CheckCircle,
-  DollarSign, ShoppingBag, Bell, Settings, LogOut,
-  ChevronRight, PawPrint, Calendar, Map, Instagram,
-  Facebook, Globe, MessageCircle, Save, X, Ticket,
-  DollarSignIcon
+  Store, Heart, Users, MapPin, Star, 
+  Eye, Edit2, Plus, Trash2, CheckCircle,
+  Bell, Settings, LogOut,
+  ChevronRight, PawPrint, Calendar, Map,
+  Globe, MessageCircle, Save, X, Ticket,
+  DollarSignIcon, Link
 } from 'lucide-react'
 import { Card, Badge, Button } from '../components/ui'
+import { QRValidator, BusinessQRDisplay } from '../components/QRValidator'
 
 type Role = 'business' | 'shelter' | 'admin'
-type BusinessTab = 'overview' | 'profile' | 'discounts' | 'settings'
-type AdminTab = 'overview' | 'reports' | 'users' | 'settings'
-type ShelterTab = 'overview' | 'pets' | 'applications' | 'settings'
+type BusinessTab = 'overview' | 'profile' | 'discounts' | 'validate' | 'settings'
 
 // Mock business data
 const mockBusinessData = {
@@ -44,10 +43,8 @@ const mockDiscounts = [
 
 export function DashboardPage() {
   const navigate = useNavigate()
-  const [role, setRole] = useState<Role>('business')
+  const [role, _setRole] = useState<Role>('business')
   const [businessTab, setBusinessTab] = useState<BusinessTab>('overview')
-  const [adminTab, setAdminTab] = useState<AdminTab>('overview')
-  const [shelterTab, setShelterTab] = useState<ShelterTab>('overview')
   
   // Business form state
   const [businessData, setBusinessData] = useState(mockBusinessData)
@@ -77,7 +74,7 @@ export function DashboardPage() {
     }
   }
 
-  const currentUser = userData[role]
+  const currentUser = userData[role] as any
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-AR', {
@@ -180,6 +177,7 @@ export function DashboardPage() {
               { id: 'overview' as BusinessTab, label: 'Resumen' },
               { id: 'profile' as BusinessTab, label: 'Mi Perfil' },
               { id: 'discounts' as BusinessTab, label: 'Cupones' },
+              { id: 'validate' as BusinessTab, label: 'Validar' },
               { id: 'settings' as BusinessTab, label: 'Config' },
             ].map((tab) => (
               <button
@@ -350,7 +348,7 @@ export function DashboardPage() {
                 {isEditingProfile ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <Instagram className="w-5 h-5 text-pink-500" />
+                      <Link className="w-5 h-5 text-pink-500" />
                       <input
                         type="text"
                         placeholder="Instagram URL"
@@ -360,7 +358,7 @@ export function DashboardPage() {
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Facebook className="w-5 h-5 text-blue-500" />
+                      <Link className="w-5 h-5 text-blue-500" />
                       <input
                         type="text"
                         placeholder="Facebook URL"
@@ -389,18 +387,18 @@ export function DashboardPage() {
                         className="flex-1 px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-primary"
                       />
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {businessData.instagram_url && (
                       <div className="flex items-center gap-3">
-                        <Instagram className="w-5 h-5 text-pink-500" />
+                        <Link className="w-5 h-5 text-pink-500" />
                         <span className="text-sm text-carbon">{businessData.instagram_url}</span>
                       </div>
                     )}
                     {businessData.facebook_url && (
                       <div className="flex items-center gap-3">
-                        <Facebook className="w-5 h-5 text-blue-500" />
+                        <Link className="w-5 h-5 text-blue-500" />
                         <span className="text-sm text-carbon">{businessData.facebook_url}</span>
                       </div>
                     )}
@@ -487,6 +485,25 @@ export function DashboardPage() {
                   <p className="text-sm text-carbon/40">Creá uno para que tu local aparezca en la app</p>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Validate Tab */}
+          {businessTab === 'validate' && (
+            <div className="space-y-4">
+              <QRValidator 
+                onValidationSuccess={(code) => {
+                  console.log('Cupón validado:', code)
+                }}
+                onValidationError={(error) => {
+                  console.error('Error:', error)
+                }}
+              />
+
+              <BusinessQRDisplay 
+                businessId={businessData.id}
+                businessName={businessData.name}
+              />
             </div>
           )}
 

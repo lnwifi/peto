@@ -18,6 +18,7 @@ import { MembershipPage } from './pages/MembershipPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { AchievementsPage } from './pages/AchievementsPage'
 import { HealthCarnetPage } from './pages/HealthCarnetPage'
+import { ValidatePage } from './pages/ValidatePage'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 function AppContent() {
@@ -46,6 +47,7 @@ function AppContent() {
           <Route path="/membresia" element={<MembershipPage />} />
           <Route path="/logros" element={<AchievementsPage />} />
           <Route path="/carnet-salud" element={<HealthCarnetPage />} />
+          <Route path="/validar/:token" element={<ValidatePage />} />
         </Routes>
       </main>
       {!isAuthPage && !isReportPage && <BottomNav />}
