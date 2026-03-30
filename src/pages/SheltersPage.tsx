@@ -2,53 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, MapPin, MessageCircle, Search, PawPrint, ExternalLink } from 'lucide-react'
 import { Card, Badge, Button } from '../components/ui'
-
-// Mock shelters data
-const mockShelters = [
-  {
-    id: '1',
-    name: 'Refugio Patitas',
-    description: 'Refugio sin fines de lucro. Ayudamos a mascotas abandonadas desde 2015. Contamos con más de 50 animales esperando una familia.',
-    address: 'Av. Corrientes 1234, Buenos Aires',
-    phone: '+5491112345678',
-    whatsapp: '+5491112345678',
-    instagram_url: 'https://instagram.com/refugiopatitas',
-    facebook_url: 'https://facebook.com/refugiopatitas',
-    logo_url: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200',
-    cover_url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800',
-    pets_count: 45,
-    adoptions_count: 320,
-    active_causes: 2,
-  },
-  {
-    id: '2',
-    name: 'Ayuda Animal',
-    description: 'Nos dedicamos al rescate y rehabilitación de animales en situación de calle. Todos nuestros animales están castrados y vacúnados.',
-    address: 'Juramento 890, Núñez',
-    phone: '+54911567890',
-    whatsapp: '+54911567890',
-    instagram_url: 'https://instagram.com/ayudaanimal',
-    logo_url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=200',
-    cover_url: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=800',
-    pets_count: 28,
-    adoptions_count: 156,
-    active_causes: 1,
-  },
-  {
-    id: '3',
-    name: 'Paw Rescue',
-    description: 'Rescate, rehabilitación y adopción responsable. Cada mascota encuentra un hogar definitivo.',
-    address: 'Defensa 567, San Telmo',
-    phone: '+54911987654',
-    whatsapp: '+54911987654',
-    instagram_url: 'https://instagram.com/pawrescue',
-    logo_url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=200',
-    cover_url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=800',
-    pets_count: 35,
-    adoptions_count: 210,
-    active_causes: 0,
-  },
-]
+import { mockShelters } from '../data/shelters'
 
 export function SheltersPage() {
   const navigate = useNavigate()
