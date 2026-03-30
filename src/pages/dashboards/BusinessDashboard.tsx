@@ -29,7 +29,7 @@ interface BusinessData {
 interface Discount {
   id: string
   title: string
-  code: string
+  description: string
   discount_percent: number
   valid_until: string
   is_active: boolean
@@ -61,8 +61,8 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
     views: 1250,
   })
   const [discounts, setDiscounts] = useState<Discount[]>([
-    { id: '1', title: '20% OFF en consultas', code: 'PATITAS20', discount_percent: 20, valid_until: '2026-04-30', is_active: true },
-    { id: '2', title: '2x1 en vacunas', code: 'VACUNA2X1', discount_percent: 50, valid_until: '2026-05-15', is_active: true },
+    { id: '1', title: '20% OFF en alimentos premium', description: 'Descuento en todos los alimentos para mascotas', discount_percent: 20, valid_until: '2026-04-30', is_active: true },
+    { id: '2', title: '2x1 en vacunas', description: 'La segunda vacuna es gratis', discount_percent: 50, valid_until: '2026-05-15', is_active: true },
   ])
   const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null)
   const [showDiscountModal, setShowDiscountModal] = useState(false)
@@ -198,13 +198,13 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
             </Card>
 
             <Card className="p-4">
-              <h3 className="font-semibold text-carbon mb-3">Cupones Activos</h3>
+              <h3 className="font-semibold text-carbon mb-3">Ofertas Activas</h3>
               <div className="space-y-2">
                 {discounts.filter(d => d.is_active).map((discount) => (
                   <div key={discount.id} className="flex items-center justify-between p-3 bg-carbon/5 rounded-xl">
                     <div>
                       <p className="font-medium text-carbon text-sm">{discount.title}</p>
-                      <p className="text-xs text-carbon/60">Code: {discount.code}</p>
+                      <p className="text-xs text-carbon/60 line-clamp-1">{discount.description}</p>
                     </div>
                     <Badge variant="primary">-{discount.discount_percent}%</Badge>
                   </div>
@@ -356,7 +356,7 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
                         {discount.is_active ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </div>
-                    <p className="text-sm text-carbon/60">Code: {discount.code}</p>
+                    <p className="text-sm text-carbon/60">{discount.description}</p>
                     <p className="text-sm text-carbon/60">Hasta: {formatDate(discount.valid_until)}</p>
                   </div>
                   <div className="text-right">
@@ -447,7 +447,7 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
 function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSave: (d: Discount) => void, onClose: () => void }) {
   const [form, setForm] = useState(discount || {
     title: '',
-    code: '',
+    description: '',
     discount_percent: 10,
     valid_until: '',
     is_active: true,
@@ -463,7 +463,7 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
       <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slide-up">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-carbon">
-            {discount?.id ? 'Editar Cupón' : 'Nuevo Cupón'}
+            {discount?.id ? 'Editar Oferta' : 'Nueva Oferta'}
           </h3>
           <button onClick={onClose} className="p-2 hover:bg-carbon/10 rounded-full">
             <X className="w-5 h-5 text-carbon/60" />
@@ -472,23 +472,24 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm text-carbon/70 mb-1 block">Título</label>
+            <label className="text-sm text-carbon/70 mb-1 block">Título de la oferta</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({...form, title: e.target.value})}
+              placeholder="Ej: 20% OFF en alimentos"
               className="w-full px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-[#331B7E]"
               required
             />
           </div>
           <div>
-            <label className="text-sm text-carbon/70 mb-1 block">Código</label>
-            <input
-              type="text"
-              value={form.code}
-              onChange={(e) => setForm({...form, code: e.target.value.toUpperCase()})}
+            <label className="text-sm text-carbon/70 mb-1 block">Descripción</label>
+            <textarea
+              value={form.description}
+              onChange={(e) => setForm({...form, description: e.target.value})}
+              placeholder="Ej: Válido en todos los alimentos premium para perros y gatos"
+              rows={2}
               className="w-full px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-[#331B7E]"
-              required
             />
           </div>
           <div>
