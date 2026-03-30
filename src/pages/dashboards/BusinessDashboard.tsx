@@ -6,6 +6,7 @@ import {
  MessageCircle, Save, X, Ticket, DollarSignIcon
 } from 'lucide-react'
 import { Card, Badge, Button } from '../../components/ui'
+import { QRValidator, BusinessQRDisplay } from '../../components/QRValidator'
 
 interface BusinessData {
   id: string
@@ -42,7 +43,7 @@ interface BusinessDashboardProps {
 
 export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'discounts' | 'settings'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'discounts' | 'validate' | 'settings'>('overview')
   const [businessData, setBusinessData] = useState<BusinessData>({
     id: '1',
     name: 'Veterinaria Huellitas',
@@ -169,7 +170,8 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
           {[
             { id: 'overview' as const, label: 'Resumen' },
             { id: 'profile' as const, label: 'Mi Perfil' },
-            { id: 'discounts' as const, label: 'Cupones' },
+            { id: 'discounts' as const, label: 'Ofertas' },
+            { id: 'validate' as const, label: 'Validar' },
             { id: 'settings' as const, label: 'Config' },
           ].map((tab) => (
             <button
@@ -397,6 +399,25 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
                 <p className="text-carbon/60">No tenés cupones creados</p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Validate Tab */}
+        {activeTab === 'validate' && (
+          <div className="space-y-4">
+            <QRValidator 
+              onValidationSuccess={(code) => {
+                alert(`¡Cupón validado! Código: ${code}`)
+              }}
+              onValidationError={(error) => {
+                alert(`Error: ${error}`)
+              }}
+            />
+
+            <BusinessQRDisplay 
+              businessId={businessData.id}
+              businessName={businessData.name}
+            />
           </div>
         )}
 
