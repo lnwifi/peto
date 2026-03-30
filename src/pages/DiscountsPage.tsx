@@ -9,11 +9,24 @@ interface Discount {
   address: string
   rating: number
   reviews: number
-  discount_percent: number
+  discount_type: 'percentage' | 'fixed'
+  discount_value: number
   discount_title: string
   discount_description: string
   logo: string
   featured: boolean
+}
+
+const formatDiscount = (discount: Discount) => {
+  if (discount.discount_type === 'percentage') {
+    return `${discount.discount_value}%`
+  } else {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+    }).format(discount.discount_value)
+  }
 }
 
 // Mock discounts data
@@ -25,7 +38,8 @@ const mockAliados: Discount[] = [
     address: 'Av. Santa Fe 1234, Palermo',
     rating: 4.8,
     reviews: 234,
-    discount_percent: 20,
+    discount_type: 'percentage',
+    discount_value: 20,
     discount_title: '20% OFF en alimentos premium',
     discount_description: 'Descuento válido en todas las líneas de alimento premium para perros y gatos',
     logo: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=100',
@@ -38,9 +52,10 @@ const mockAliados: Discount[] = [
     address: 'Av. Corrientes 5678, Belgrano',
     rating: 4.5,
     reviews: 156,
-    discount_percent: 15,
-    discount_title: '2x1 en vacunas',
-    discount_description: 'La segunda vacuna tiene 50% de descuento',
+    discount_type: 'fixed',
+    discount_value: 1500,
+    discount_title: '$1500 OFF en cualquier producto',
+    discount_description: 'Descuento fijo en tu próxima compra',
     logo: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=100',
     featured: true,
   },
@@ -51,7 +66,8 @@ const mockAliados: Discount[] = [
     address: 'Defensa 890, San Telmo',
     rating: 4.7,
     reviews: 89,
-    discount_percent: 10,
+    discount_type: 'percentage',
+    discount_value: 10,
     discount_title: '10% OFF en todo',
     discount_description: 'En tu consumición y la de tu mascota',
     logo: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=100',
@@ -156,7 +172,7 @@ export function DiscountsPage() {
                       {aliado.address}
                     </div>
                   </div>
-                  <Badge variant="primary">-{aliado.discount_percent}%</Badge>
+                  <Badge variant="primary">-{formatDiscount(aliado)}</Badge>
                 </div>
               </Card>
             ))}
@@ -178,7 +194,7 @@ export function DiscountsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-semibold text-carbon">{aliado.name}</h3>
-                    <Badge variant="primary">-{aliado.discount_percent}%</Badge>
+                    <Badge variant="primary">-{formatDiscount(aliado)}</Badge>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-carbon/60 mt-0.5">
                     <Star className="w-3 h-3 text-amber-400 fill-amber-400" />

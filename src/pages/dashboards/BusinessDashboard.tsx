@@ -30,7 +30,8 @@ interface Discount {
   id: string
   title: string
   description: string
-  discount_percent: number
+  discount_type: 'percentage' | 'fixed'
+  discount_value: number
   valid_until: string
   is_active: boolean
 }
@@ -61,8 +62,8 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
     views: 1250,
   })
   const [discounts, setDiscounts] = useState<Discount[]>([
-    { id: '1', title: '20% OFF en alimentos premium', description: 'Descuento en todos los alimentos para mascotas', discount_percent: 20, valid_until: '2026-04-30', is_active: true },
-    { id: '2', title: '2x1 en vacunas', description: 'La segunda vacuna es gratis', discount_percent: 50, valid_until: '2026-05-15', is_active: true },
+    { id: '1', title: '20% OFF en alimentos premium', description: 'Descuento en todos los alimentos para mascotas', discount_type: 'percentage', discount_value: 20, valid_until: '2026-04-30', is_active: true },
+    { id: '2', title: '$1000 OFF en consulta', description: 'Descuento fijo en consulta general', discount_type: 'fixed', discount_value: 1000, valid_until: '2026-05-15', is_active: true },
   ])
   const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null)
   const [showDiscountModal, setShowDiscountModal] = useState(false)
@@ -78,6 +79,14 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
+  }
+
+  const formatDiscount = (discount: Discount) => {
+    if (discount.discount_type === 'percentage') {
+      return `${discount.discount_value}%`
+    } else {
+      return formatPrice(discount.discount_value)
+    }
   }
 
   const saveBusinessProfile = () => {
@@ -206,7 +215,7 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
                       <p className="font-medium text-carbon text-sm">{discount.title}</p>
                       <p className="text-xs text-carbon/60 line-clamp-1">{discount.description}</p>
                     </div>
-                    <Badge variant="primary">-{discount.discount_percent}%</Badge>
+                    <Badge variant="primary">-{formatDiscount(discount)}</Badge>
                   </div>
                 ))}
               </div>
@@ -361,7 +370,7 @@ export function BusinessDashboard({ onLogout }: BusinessDashboardProps) {
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold" style={{ color: '#331B7E' }}>
-                      -{discount.discount_percent}%
+                      -{formatDiscount(discount)}
                     </p>
                     <div className="flex gap-2 mt-2">
                       <button 
@@ -448,7 +457,8 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
   const [form, setForm] = useState(discount || {
     title: '',
     description: '',
-    discount_percent: 10,
+    discount_type: 'percentage',
+    discount_value: 10,
     valid_until: '',
     is_active: true,
   })
@@ -460,7 +470,7 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
-      <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slide-up">
+      <div className="bg-white w-full max-w-md rounded-t-3xl p-6 animate-slide-up max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-carbon">
             {discount?.id ? 'Editar Oferta' : 'Nueva Oferta'}
@@ -477,7 +487,7 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
               type="text"
               value={form.title}
               onChange={(e) => setForm({...form, title: e.target.value})}
-              placeholder="Ej: 20% OFF en alimentos"
+              placeholder="Ej: Descuento en alimentos"
               className="w-full px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-[#331B7E]"
               required
             />
@@ -487,23 +497,62 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
             <textarea
               value={form.description}
               onChange={(e) => setForm({...form, description: e.target.value})}
-              placeholder="Ej: Válido en todos los alimentos premium para perros y gatos"
+              placeholder="Ej: Válido en todos los alimentos premium"
               rows={2}
               className="w-full px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-[#331B7E]"
             />
           </div>
+          
+          {/* Discount Type Selector */}
           <div>
-            <label className="text-sm text-carbon/70 mb-1 block">Porcentaje (%)</label>
+            <label className="text-sm text-carbon/70 mb-2 block">Tipo de descuento</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setForm({...form, discount_type: 'percentage', discount_value: form.discount_type === 'fixed' ? 10 : form.discount_value})}
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition ${
+                  form.discount_type === 'percentage'
+                    ? 'text-white'
+                    : 'bg-carbon/10 text-carbon/60'
+                }`}
+                style={form.discount_type === 'percentage' ? { background: '#331B7E' } : {}}
+              >
+                Porcentaje (%)
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm({...form, discount_type: 'fixed', discount_value: form.discount_type === 'percentage' ? 1000 : form.discount_value})}
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition ${
+                  form.discount_type === 'fixed'
+                    ? 'text-white'
+                    : 'bg-carbon/10 text-carbon/60'
+                }`}
+                style={form.discount_type === 'fixed' ? { background: '#331B7E' } : {}}
+              >
+                Monto fijo ($)
+              </button>
+            </div>
+          </div>
+
+          {/* Discount Value */}
+          <div>
+            <label className="text-sm text-carbon/70 mb-1 block">
+              {form.discount_type === 'percentage' ? 'Porcentaje (%)' : 'Monto ($ ARS)'}
+            </label>
             <input
               type="number"
-              value={form.discount_percent}
-              onChange={(e) => setForm({...form, discount_percent: parseInt(e.target.value)})}
-              min="1"
-              max="100"
+              value={form.discount_value}
+              onChange={(e) => setForm({...form, discount_value: parseInt(e.target.value)})}
+              min={form.discount_type === 'percentage' ? 1 : 100}
+              max={form.discount_type === 'percentage' ? 100 : undefined}
               className="w-full px-3 py-2 border border-carbon/20 rounded-xl text-sm focus:outline-none focus:border-[#331B7E]"
               required
             />
+            {form.discount_type === 'percentage' && (
+              <p className="text-xs text-carbon/50 mt-1">Máximo 100%</p>
+            )}
           </div>
+
           <div>
             <label className="text-sm text-carbon/70 mb-1 block">Válido hasta</label>
             <input
@@ -522,11 +571,11 @@ function DiscountModal({ discount, onSave, onClose }: { discount: Discount, onSa
               onChange={(e) => setForm({...form, is_active: e.target.checked})}
               className="w-5 h-5 rounded"
             />
-            <label htmlFor="is_active" className="text-sm text-carbon">Cupón activo</label>
+            <label htmlFor="is_active" className="text-sm text-carbon">Oferta activa</label>
           </div>
           <Button type="submit" className="w-full">
             <Save className="w-4 h-4 mr-2" />
-            Guardar Cupón
+            Guardar Oferta
           </Button>
         </form>
       </div>
