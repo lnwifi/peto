@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { User, MapPin, Heart, ShoppingBag, Settings, LogOut, Crown, ChevronRight, Plus, Edit2, Stethoscope } from 'lucide-react'
+import { User, MapPin, Heart, ShoppingBag, Settings, LogOut, Crown, ChevronRight, Plus, Edit2, Stethoscope, LayoutDashboard } from 'lucide-react'
 import { Card, Badge, Button, Avatar } from '../components/ui'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -201,6 +201,17 @@ export function ProfilePage() {
             <div className="flex-1">
               <p className="font-medium text-carbon">Mis Reportes</p>
               <p className="text-xs text-carbon/60">Mascotas perdidas/encontradas</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-carbon/30" />
+          </Link>
+
+          <Link to="/dashboard" className="flex items-center gap-4 p-4 hover:bg-carbon/5 transition border-t border-carbon/5">
+            <div className="w-10 h-10 bg-[#331B7E]/10 rounded-xl flex items-center justify-center">
+              <LayoutDashboard className="w-5 h-5 text-[#331B7E]" />
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-carbon">Mi Dashboard</p>
+              <p className="text-xs text-carbon/60">Gestionar mi negocio o refugio</p>
             </div>
             <ChevronRight className="w-5 h-5 text-carbon/30" />
           </Link>
