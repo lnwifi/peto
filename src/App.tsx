@@ -22,6 +22,7 @@ import { ValidatePage } from './pages/ValidatePage'
 import { DonationsPage } from './pages/DonationsPage'
 import { SheltersPage } from './pages/SheltersPage'
 import { ShelterDetailPage } from './pages/ShelterDetailPage'
+import { DashboardPage } from './pages/DashboardPage'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 function AppContent() {
@@ -54,6 +55,7 @@ function AppContent() {
           <Route path="/donaciones" element={<DonationsPage />} />
           <Route path="/refugios" element={<SheltersPage />} />
           <Route path="/refugios/:id" element={<ShelterDetailPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </main>
       {!isAuthPage && !isReportPage && <BottomNav />}
