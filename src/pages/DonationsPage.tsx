@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, Clock, AlertCircle, Share2 } from 'lucide-react'
+import { Heart, Clock, AlertCircle, Share2, User } from 'lucide-react'
 import { Card, Badge, Button } from '../components/ui'
 
 // Mock urgent causes data
@@ -25,7 +25,7 @@ const mockCauses = [
     shelter_name: 'Refugio Patitas',
     shelter_logo: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=100',
     title: 'Vacunas de emergencia',
-    description: 'Vacunas para todos los cachorros que llegaron recently al refugio. Necesitamos protegerlos de enfermedades.',
+    description: 'Vacunas para todos los cachorros que llegaron recientemente al refugio. Necesitamos protegerlos de enfermedades.',
     goal_amount: 80000,
     current_amount: 20000,
     image_url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=400',
@@ -40,7 +40,7 @@ const mockCauses = [
     shelter_name: 'Ayuda Animal',
     shelter_logo: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=100',
     title: 'Cirugía urgente - Luna',
-    description: 'Luna necesita una cirugía de cadera. Es una perrita abandonada que救 ourselves en la calle.',
+    description: 'Luna necesita una cirugía de cadera. Es una perrita abandonada que encontramos en la calle.',
     goal_amount: 250000,
     current_amount: 180000,
     image_url: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=400',
@@ -85,7 +85,6 @@ export function DonationsPage() {
   })
 
   const handleDonate = (cause: typeof mockCauses[0]) => {
-    // TODO: Integrate with Mercado Pago
     alert(`Donar a: ${cause.title}\nMeta: ${formatPrice(cause.goal_amount)}`)
   }
 
@@ -105,25 +104,21 @@ export function DonationsPage() {
   return (
     <div className="min-h-screen bg-cream pb-20">
       {/* Header */}
-      <div 
-        className="px-4 pt-6 pb-8"
-        style={{ background: '#331B7E' }}
-      >
+      <div className="px-4 pt-6 pb-6 bg-primary">
         <h1 className="font-display font-bold text-2xl text-white mb-1">Donaciones</h1>
         <p className="text-white/80 text-sm">Ayudá a los refugios con sus causas</p>
       </div>
 
       {/* Filter */}
-      <div className="px-4 -mt-4 mb-4">
+      <div className="px-4 py-4 bg-white border-b border-carbon/10">
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition ${
               filter === 'all'
-                ? 'text-white'
-                : 'bg-white text-carbon/70 border border-carbon/10'
+                ? 'bg-primary text-white'
+                : 'bg-cream text-carbon/70 border border-carbon/10'
             }`}
-            style={filter === 'all' ? { background: '#331B7E' } : {}}
           >
             Todas
           </button>
@@ -131,10 +126,9 @@ export function DonationsPage() {
             onClick={() => setFilter('urgent')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition flex items-center gap-1 ${
               filter === 'urgent'
-                ? 'text-white'
-                : 'bg-white text-red-500 border border-red-200'
+                ? 'bg-red-500 text-white'
+                : 'bg-cream text-red-500 border border-red-200'
             }`}
-            style={filter === 'urgent' ? { background: '#DC2626' } : {}}
           >
             <AlertCircle className="w-4 h-4" />
             Urgentes
@@ -143,82 +137,93 @@ export function DonationsPage() {
       </div>
 
       {/* Causes List */}
-      <div className="px-4 space-y-4">
+      <div className="px-4 py-4 space-y-4">
         {sortedCauses.map((cause) => (
-          <Card key={cause.id} className="p-4 overflow-hidden">
+          <Card key={cause.id} className="overflow-hidden">
             {/* Image */}
-            <div className="relative -mx-4 -mt-4 mb-3">
+            <div className="relative">
               <img 
                 src={cause.image_url} 
                 alt={cause.title}
                 className="w-full h-40 object-cover"
               />
-              <div className="absolute top-3 left-3 flex gap-2">
-                {cause.is_urgent && (
-                  <Badge variant="error" className="shadow-lg">
+              {cause.is_urgent && (
+                <div className="absolute top-3 left-3">
+                  <Badge variant="error">
                     ⚠️ URGENTE
                   </Badge>
-                )}
-              </div>
+                </div>
+              )}
               <button
                 onClick={() => handleShare(cause)}
-                className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg"
+                className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow"
               >
                 <Share2 className="w-4 h-4 text-carbon/60" />
               </button>
             </div>
 
-            {/* Shelter Info */}
-            <div className="flex items-center gap-2 mb-2">
-              <img 
-                src={cause.shelter_logo} 
-                alt={cause.shelter_name}
-                className="w-6 h-6 rounded-full object-cover"
-              />
-              <span className="text-xs text-carbon/60">{cause.shelter_name}</span>
-            </div>
-
-            {/* Title & Description */}
-            <h3 className="font-bold text-carbon text-lg mb-1">{cause.title}</h3>
-            <p className="text-sm text-carbon/60 line-clamp-2 mb-3">{cause.description}</p>
-
-            {/* Progress Bar */}
-            <div className="mb-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium" style={{ color: '#331B7E' }}>
-                  {formatPrice(cause.current_amount)}
-                </span>
-                <span className="text-xs text-carbon/50">
-                  de {formatPrice(cause.goal_amount)}
-                </span>
-              </div>
-              <div className="h-3 bg-carbon/10 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all"
-                  style={{ width: `${getProgress(cause.current_amount, cause.goal_amount)}%` }}
+            {/* Content */}
+            <div className="p-4">
+              {/* Shelter Info */}
+              <div className="flex items-center gap-2 mb-2">
+                <img 
+                  src={cause.shelter_logo} 
+                  alt={cause.shelter_name}
+                  className="w-6 h-6 rounded-full object-cover"
                 />
+                <span className="text-xs text-carbon/60">{cause.shelter_name}</span>
               </div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-xs text-carbon/50">
-                  {cause.donors_count} donors
-                </span>
-                {cause.expires_at && (
-                  <span className="text-xs text-carbon/50 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {daysLeft(cause.expires_at)} días restantes
-                  </span>
-                )}
-              </div>
-            </div>
 
-            {/* Donate Button */}
-            <Button 
-              onClick={() => handleDonate(cause)}
-              className="w-full"
-            >
-              <Heart className="w-4 h-4 mr-2" />
-              Donar ahora
-            </Button>
+              {/* Title & Description */}
+              <h3 className="font-bold text-carbon text-lg mb-1">{cause.title}</h3>
+              <p className="text-sm text-carbon/60 line-clamp-2 mb-4">{cause.description}</p>
+
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-primary">
+                    {formatPrice(cause.current_amount)}
+                  </span>
+                  <span className="text-sm font-bold text-primary">
+                    {getProgress(cause.current_amount, cause.goal_amount)}%
+                  </span>
+                </div>
+                <div className="h-3 bg-carbon/10 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary rounded-full transition-all"
+                    style={{ width: `${getProgress(cause.current_amount, cause.goal_amount)}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-carbon/50">
+                    de {formatPrice(cause.goal_amount)}
+                  </span>
+                  {cause.expires_at && (
+                    <span className="text-xs text-carbon/50 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {daysLeft(cause.expires_at)} días
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Meta info */}
+              <div className="flex items-center gap-4 mb-4 p-3 bg-cream rounded-xl">
+                <div className="flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-carbon/40" />
+                  <span className="text-xs text-carbon/60">{cause.donors_count} donors</span>
+                </div>
+              </div>
+
+              {/* Donate Button */}
+              <Button 
+                onClick={() => handleDonate(cause)}
+                className="w-full"
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Donar ahora
+              </Button>
+            </div>
           </Card>
         ))}
 
@@ -231,7 +236,7 @@ export function DonationsPage() {
       </div>
 
       {/* Bottom Info */}
-      <div className="px-4 mt-6">
+      <div className="px-4 mt-4">
         <Card className="p-4">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">

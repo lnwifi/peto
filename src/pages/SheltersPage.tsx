@@ -36,7 +36,7 @@ const mockShelters = [
   {
     id: '3',
     name: 'Paw Rescue',
-    description: 'Rescate, rehabilitación y adopción responsable.每了一只 mascota encuentra un hogar definitivo.',
+    description: 'Rescate, rehabilitación y adopción responsable. Cada mascota encuentra un hogar definitivo.',
     address: 'Defensa 567, San Telmo',
     phone: '+54911987654',
     whatsapp: '+54911987654',
@@ -68,16 +68,13 @@ export function SheltersPage() {
   return (
     <div className="min-h-screen bg-cream pb-20">
       {/* Header */}
-      <div 
-        className="px-4 pt-6 pb-8"
-        style={{ background: '#331B7E' }}
-      >
+      <div className="px-4 pt-6 pb-6 bg-primary">
         <h1 className="font-display font-bold text-2xl text-white mb-1">Refugios</h1>
         <p className="text-white/80 text-sm">Conocé a los refugios de la comunidad</p>
       </div>
 
-      {/* Search & Filter */}
-      <div className="px-4 -mt-4 mb-4">
+      {/* Search */}
+      <div className="px-4 py-4 bg-white border-b border-carbon/10">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-carbon/40" />
           <input
@@ -85,103 +82,91 @@ export function SheltersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar refugios..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-carbon/10 rounded-xl text-sm focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-4 py-2.5 bg-cream border border-carbon/10 rounded-xl text-sm focus:outline-none focus:border-primary"
           />
         </div>
       </div>
 
       {/* Shelters List */}
-      <div className="px-4 space-y-4">
+      <div className="px-4 py-4 space-y-4">
         {filteredShelters.map((shelter) => (
-          <Card key={shelter.id} className="p-0 overflow-hidden">
-            {/* Cover Image */}
-            <div className="relative h-32 -mx-4 -mt-4 mb-4">
+          <Card key={shelter.id} className="p-4">
+            {/* Header with logo and name */}
+            <div className="flex items-start gap-3 mb-3">
               <img 
-                src={shelter.cover_url} 
+                src={shelter.logo_url} 
                 alt={shelter.name}
-                className="w-full h-full object-cover"
+                className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              
-              {/* Logo */}
-              <div className="absolute -bottom-6 left-4">
-                <div className="w-16 h-16 rounded-2xl border-4 border-white overflow-hidden shadow-lg">
-                  <img 
-                    src={shelter.logo_url} 
-                    alt={shelter.name}
-                    className="w-full h-full object-cover"
-                  />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-bold text-carbon">{shelter.name}</h3>
+                  {shelter.active_causes > 0 && (
+                    <Badge variant="primary" size="sm">
+                      {shelter.active_causes} causa{shelter.active_causes > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-carbon/60 mt-0.5">
+                  <MapPin className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">{shelter.address}</span>
                 </div>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="px-4 pt-2">
-              <div className="flex items-start justify-between mb-2">
+            <p className="text-sm text-carbon/70 mb-3 line-clamp-2">{shelter.description}</p>
+
+            {/* Stats */}
+            <div className="flex gap-4 mb-4 p-3 bg-cream rounded-xl">
+              <div className="flex items-center gap-2">
+                <PawPrint className="w-5 h-5 text-primary" />
                 <div>
-                  <h3 className="font-bold text-carbon text-lg">{shelter.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-carbon/60">
-                    <MapPin className="w-3 h-3" />
-                    {shelter.address}
-                  </div>
-                </div>
-                {shelter.active_causes > 0 && (
-                  <Badge variant="primary" size="sm">
-                    {shelter.active_causes} causa{shelter.active_causes > 1 ? 's' : ''}
-                  </Badge>
-                )}
-              </div>
-
-              <p className="text-sm text-carbon/70 mb-3 line-clamp-2">{shelter.description}</p>
-
-              {/* Stats */}
-              <div className="flex gap-4 mb-3">
-                <div className="flex items-center gap-1">
-                  <PawPrint className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium text-carbon">{shelter.pets_count}</span>
-                  <span className="text-xs text-carbon/50">mascotas</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Heart className="w-4 h-4 text-red-400" />
-                  <span className="text-sm font-medium text-carbon">{shelter.adoptions_count}</span>
-                  <span className="text-xs text-carbon/50">adopciones</span>
+                  <span className="text-sm font-bold text-carbon">{shelter.pets_count}</span>
+                  <span className="text-xs text-carbon/60 ml-1">mascotas</span>
                 </div>
               </div>
-
-              {/* Actions */}
-              <div className="flex gap-2 mb-4">
-                {shelter.whatsapp && (
-                  <button
-                    onClick={() => openWhatsApp(shelter.whatsapp)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-green-500 text-white rounded-xl text-sm font-medium hover:bg-green-600 transition"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    WhatsApp
-                  </button>
-                )}
-                {shelter.instagram_url && (
-                  <button
-                    onClick={() => openInstagram(shelter.instagram_url)}
-                    className="flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl text-sm font-medium hover:opacity-90 transition"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Instagram
-                  </button>
-                )}
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-red-400" />
+                <div>
+                  <span className="text-sm font-bold text-carbon">{shelter.adoptions_count}</span>
+                  <span className="text-xs text-carbon/60 ml-1">adopciones</span>
+                </div>
               </div>
+            </div>
 
-              {/* Donations CTA */}
-              {shelter.active_causes > 0 && (
-                <Button 
-                  variant="secondary" 
-                  className="w-full"
-                  onClick={() => window.location.href = '/donaciones'}
+            {/* Actions */}
+            <div className="flex gap-2">
+              {shelter.whatsapp && (
+                <button
+                  onClick={() => openWhatsApp(shelter.whatsapp)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium"
                 >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Ver causas de donación
-                </Button>
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp
+                </button>
+              )}
+              {shelter.instagram_url && (
+                <button
+                  onClick={() => openInstagram(shelter.instagram_url)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-xl text-sm font-medium"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Instagram
+                </button>
               )}
             </div>
+
+            {/* Donations CTA */}
+            {shelter.active_causes > 0 && (
+              <Button 
+                variant="secondary" 
+                className="w-full mt-3"
+                onClick={() => window.location.href = '/donaciones'}
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Ver causas de donación
+              </Button>
+            )}
           </Card>
         ))}
 
