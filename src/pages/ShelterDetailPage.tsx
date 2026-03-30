@@ -51,7 +51,6 @@ const getProgress = (current: number, goal: number) => {
 }
 
 export function ShelterDetailPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'available' | 'adopted' | 'causes'>('available')
 
