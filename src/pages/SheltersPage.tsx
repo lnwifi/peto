@@ -125,7 +125,7 @@ export function SheltersPage() {
             {/* Stats */}
             <div className="flex gap-4 mb-4 p-3 bg-cream rounded-xl">
               <div className="flex items-center gap-2">
-                <PawPrint className="w-5 h-5 text-primary" />
+                <PawPrint className="w-5 h-5" style={{ color: '#331B7E' }} />
                 <div>
                   <span className="text-sm font-bold text-carbon">{shelter.pets_count}</span>
                   <span className="text-xs text-carbon/60 ml-1">mascotas</span>
@@ -145,18 +145,20 @@ export function SheltersPage() {
               {shelter.whatsapp && (
                 <button
                   onClick={() => openWhatsApp(shelter.whatsapp)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white"
+                  style={{ background: '#25D366' }}
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-5 h-5" />
                   WhatsApp
                 </button>
               )}
               {shelter.instagram_url && (
                 <button
                   onClick={() => openInstagram(shelter.instagram_url)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-xl text-sm font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white"
+                  style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-5 h-5" />
                   Instagram
                 </button>
               )}

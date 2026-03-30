@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Heart, MapPin, MessageCircle, PawPrint, CheckCircle, Clock, AlertCircle, ExternalLink, ArrowLeft } from 'lucide-react'
-import { Card, Badge, Button } from '../components/ui'
+import { Heart, MapPin, MessageCircle, PawPrint, CheckCircle, Clock, ExternalLink, ArrowLeft } from 'lucide-react'
+import { Card } from '../components/ui'
 
 // Mock shelter data
 const mockShelter = {
@@ -64,9 +64,9 @@ export function ShelterDetailPage() {
 
   return (
     <div className="min-h-screen bg-cream pb-20">
-      {/* Header */}
+      {/* Header with cover */}
       <div className="relative">
-        <div className="h-40 bg-primary">
+        <div className="h-40" style={{ background: '#331B7E' }}>
           <img 
             src={mockShelter.cover_url} 
             alt={mockShelter.name}
@@ -103,16 +103,18 @@ export function ShelterDetailPage() {
       <div className="px-4 mt-4 flex gap-2">
         <button
           onClick={openWhatsApp}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white"
+          style={{ background: '#25D366' }}
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-5 h-5" />
           WhatsApp
         </button>
         <button
           onClick={openInstagram}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-primary text-white rounded-xl text-sm font-medium"
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white"
+          style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
         >
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="w-5 h-5" />
           Instagram
         </button>
       </div>
@@ -127,39 +129,39 @@ export function ShelterDetailPage() {
         <div className="flex border-b border-carbon/10">
           <button
             onClick={() => setActiveTab('available')}
-            className={`flex-1 pb-3 text-sm font-medium border-b-2 transition ${
+            className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition ${
               activeTab === 'available' 
-                ? 'border-primary text-primary' 
+                ? 'border-[#331B7E] text-[#331B7E]' 
                 : 'border-transparent text-carbon/60'
             }`}
           >
-            <span className="flex items-center justify-center gap-1">
+            <span className="flex items-center justify-center gap-1.5">
               <PawPrint className="w-4 h-4" />
               En Adopción ({mockAvailablePets.length})
             </span>
           </button>
           <button
             onClick={() => setActiveTab('adopted')}
-            className={`flex-1 pb-3 text-sm font-medium border-b-2 transition ${
+            className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition ${
               activeTab === 'adopted' 
-                ? 'border-primary text-primary' 
+                ? 'border-[#331B7E] text-[#331B7E]' 
                 : 'border-transparent text-carbon/60'
             }`}
           >
-            <span className="flex items-center justify-center gap-1">
+            <span className="flex items-center justify-center gap-1.5">
               <CheckCircle className="w-4 h-4" />
               Adoptadas ({mockAdoptedPets.length})
             </span>
           </button>
           <button
             onClick={() => setActiveTab('causes')}
-            className={`flex-1 pb-3 text-sm font-medium border-b-2 transition ${
+            className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition ${
               activeTab === 'causes' 
-                ? 'border-primary text-primary' 
+                ? 'border-[#331B7E] text-[#331B7E]' 
                 : 'border-transparent text-carbon/60'
             }`}
           >
-            <span className="flex items-center justify-center gap-1">
+            <span className="flex items-center justify-center gap-1.5">
               <Heart className="w-4 h-4" />
               Causas ({mockCauses.length})
             </span>
@@ -182,9 +184,12 @@ export function ShelterDetailPage() {
                 <h4 className="font-semibold text-carbon text-sm">{pet.name}</h4>
                 <p className="text-xs text-carbon/60">{pet.breed}</p>
                 <p className="text-xs text-carbon/50">{pet.age} • {pet.gender}</p>
-                <Button size="sm" className="w-full mt-2">
+                <button 
+                  className="w-full mt-2 py-2 rounded-lg text-sm font-semibold text-white"
+                  style={{ background: '#331B7E' }}
+                >
                   Adoptar
-                </Button>
+                </button>
               </Card>
             ))}
           </div>
@@ -203,10 +208,9 @@ export function ShelterDetailPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h4 className="font-semibold text-carbon">{pet.name}</h4>
-                    <Badge variant="success" size="sm">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Adoptado
-                    </Badge>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium text-white bg-green-500">
+                      ✓ Adoptado
+                    </span>
                   </div>
                   <p className="text-sm text-carbon/60">{pet.breed}</p>
                   <p className="text-xs text-carbon/50 flex items-center gap-1 mt-1">
@@ -224,32 +228,29 @@ export function ShelterDetailPage() {
           <div className="space-y-4">
             {mockCauses.map((cause) => (
               <Card key={cause.id} className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    {cause.is_urgent && (
-                      <Badge variant="error" size="sm">
-                        <AlertCircle className="w-3 h-3 mr-1" />
-                        URGENTE
-                      </Badge>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2 mb-2">
+                  {cause.is_urgent && (
+                    <span className="px-2 py-1 rounded-full text-xs font-bold text-white bg-red-500">
+                      ⚠️ URGENTE
+                    </span>
+                  )}
                 </div>
-                <h4 className="font-semibold text-carbon mb-2">{cause.title}</h4>
+                <h4 className="font-semibold text-carbon text-lg mb-3">{cause.title}</h4>
                 
                 {/* Progress */}
                 <div className="mb-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-primary">
+                    <span className="text-sm font-semibold" style={{ color: '#331B7E' }}>
                       {formatPrice(cause.current_amount)}
                     </span>
-                    <span className="text-sm font-bold text-primary">
+                    <span className="text-sm font-bold" style={{ color: '#331B7E' }}>
                       {getProgress(cause.current_amount, cause.goal_amount)}%
                     </span>
                   </div>
                   <div className="h-3 bg-carbon/10 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${getProgress(cause.current_amount, cause.goal_amount)}%` }}
+                      className="h-full rounded-full"
+                      style={{ width: `${getProgress(cause.current_amount, cause.goal_amount)}%`, background: '#331B7E' }}
                     />
                   </div>
                   <p className="text-xs text-carbon/50 mt-1">
@@ -257,10 +258,15 @@ export function ShelterDetailPage() {
                   </p>
                 </div>
 
-                <Button className="w-full" variant="secondary">
-                  <Heart className="w-4 h-4 mr-2" />
-                  Donar
-                </Button>
+                <button 
+                  className="w-full py-3 rounded-xl text-sm font-semibold text-white"
+                  style={{ background: '#F27131' }}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    <Heart className="w-4 h-4" />
+                    Donar ahora
+                  </span>
+                </button>
               </Card>
             ))}
 
