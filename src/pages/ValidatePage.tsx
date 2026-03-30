@@ -1,45 +1,36 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Html5Qrcode } from 'html5-qrcode'
 import { 
-  QrCode, Clock, CheckCircle, AlertCircle, 
-  Copy, ArrowLeft
+  Clock, CheckCircle, AlertCircle, 
+  Copy, ArrowLeft, Camera, Keyboard
 } from 'lucide-react'
 import { Card, Button } from '../components/ui'
 import { QRCodeSVG } from 'qrcode.react'
-import { generateValidationCode, formatRemainingTime } from '../lib/validation'
-
-interface DiscountInfo {
-  id: string
-  title: string
-  code: string
-  discount_percent: number
-  business_id: string
-}
+import { formatRemainingTime } from '../lib/validation'
 
 export function ValidatePage() {
   const { token } = useParams()
   const navigate = useNavigate()
-  const [mode, setMode] = useState<'menu' | 'code'>('menu')
+  const [mode, setMode] = useState<'menu' | 'scan' | 'manual' | 'code'>('menu')
   const [validationCode, setValidationCode] = useState<{
     code: string
     expiresAt: Date
   } | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_discount, _setDiscount] = useState<DiscountInfo | null>(null)
   const [couponCode, setCouponCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [remainingTime, setRemainingTime] = useState<string>('')
+  const [scanResult, setScanResult] = useState<string | null>(null)
+  const scannerRef = useRef<Html5Qrcode | null>(null)
 
-  // In production, we'd fetch business info by token
-  // For now, use mock data if no business found
   useEffect(() => {
-    // This would normally fetch business info from /validar/:token
-    // For demo, we'll use a mock business ID
-    if (token) {
-      console.log('Business token:', token)
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {})
+      }
     }
-  }, [token])
+  }, [])
 
   useEffect(() => {
     if (validationCode) {
@@ -49,6 +40,44 @@ export function ValidatePage() {
       return () => clearInterval(interval)
     }
   }, [validationCode])
+
+  const startScanner = async () => {
+    setMode('scan')
+    setError(null)
+    
+    try {
+      const scanner = new Html5Qrcode('qr-reader')
+      scannerRef.current = scanner
+
+      await scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          // Stop scanner
+          scanner.stop().catch(() => {})
+          setScanResult(decodedText)
+          // If it looks like a coupon code, use it directly
+          if (decodedText.length <= 20) {
+            setCouponCode(decodedText)
+          }
+          setMode('manual')
+        },
+        () => {} // Ignore failures
+      )
+    } catch (err) {
+      console.error('Error starting scanner:', err)
+      setError('No se pudo acceder a la cámara')
+      setMode('menu')
+    }
+  }
+
+  const stopScanner = () => {
+    if (scannerRef.current) {
+      scannerRef.current.stop().catch(() => {})
+      scannerRef.current = null
+    }
+    setMode('menu')
+  }
 
   const getValidationCode = async () => {
     if (!couponCode.trim()) {
@@ -60,29 +89,21 @@ export function ValidatePage() {
     setError(null)
 
     try {
-      // In production, this would:
-      // 1. Look up the business by token
-      // 2. Find the discount by couponCode
-      // 3. Create validation code for this user
-
-      // Mock response for demo
-      const mockBusinessId = 'mock-business-id'
-      const mockUserId = 'mock-user-id'
-      const mockDiscountId = 'mock-discount-id'
-
-      const result = await generateValidationCode(
-        mockBusinessId,
-        mockUserId,
-        mockDiscountId,
-        couponCode
-      )
-
-      if (result) {
-        setValidationCode(result)
-        setMode('code')
-      } else {
-        setError('No se pudo generar el código. Verificá el código del cupón.')
+      // Mock - in production this calls Supabase
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Generate a mock validation code
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+      let code = ''
+      for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length))
       }
+      
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 min
+      
+      setValidationCode({ code, expiresAt })
+      setMode('code')
     } catch (err) {
       setError('Error al generar el código')
     }
@@ -99,80 +120,45 @@ export function ValidatePage() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
-      <div 
-        className="px-4 pt-6 pb-8"
-        style={{ background: '#331B7E' }}
-      >
-        <div className="flex items-center gap-4 mb-4">
+      <div className="px-4 pt-6 pb-4" style={{ background: '#331B7E' }}>
+        <div className="flex items-center gap-4">
           <button 
-            onClick={() => navigate(-1)}
+            onClick={() => { stopScanner(); navigate(-1) }}
             className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
           >
             <ArrowLeft className="w-5 h-5 text-white" />
           </button>
-          <h1 className="font-display font-bold text-2xl text-white">Validar Cupón</h1>
+          <div>
+            <h1 className="font-display font-bold text-xl text-white">Validar Cupón</h1>
+            {token && <p className="text-white/60 text-sm">{token}</p>}
+          </div>
         </div>
       </div>
 
-      <div className="px-4 -mt-4">
-        {/* Mode Selection */}
+      <div className="px-4 py-4">
+        {/* Menu Selection */}
         {mode === 'menu' && (
           <div className="space-y-4">
-            <Card className="p-6">
+            <Card className="p-4">
               <h3 className="font-semibold text-carbon text-center mb-4">
-                ¿Cómo querés validar tu cupón?
+                Escaneá el código QR del local o ingresá el código manualmente
               </h3>
               
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => {
-                    // In production, this would open camera to scan business QR
-                    alert('Escaneá el QR del local para validar automáticamente')
-                  }}
-                  className="w-full flex items-center gap-4 p-4 bg-primary/5 border border-primary/20 rounded-xl hover:bg-primary/10 transition"
+                  onClick={startScanner}
+                  className="flex flex-col items-center gap-2 p-4 bg-primary rounded-xl text-white"
                 >
-                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                    <QrCode className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="font-medium text-carbon">Escanear QR del local</p>
-                    <p className="text-sm text-carbon/60">Acercá tu cámara al código QR</p>
-                  </div>
+                  <Camera className="w-8 h-8" />
+                  <span className="text-sm font-medium">Escanear QR</span>
                 </button>
-
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-carbon/10" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="px-4 bg-cream text-sm text-carbon/60">o</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <h4 className="font-medium text-carbon text-center">
-                    Ingresá el código del cupón
-                  </h4>
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    placeholder="Ej: PATITAS20"
-                    className="w-full px-4 py-3 text-center text-lg tracking-widest font-mono border border-carbon/20 rounded-xl focus:outline-none focus:border-primary"
-                  />
-                  
-                  {error && (
-                    <p className="text-red-500 text-sm text-center">{error}</p>
-                  )}
-
-                  <Button
-                    onClick={getValidationCode}
-                    disabled={isLoading || !couponCode.trim()}
-                    className="w-full"
-                  >
-                    {isLoading ? 'Generando...' : 'Obtener Código de Validación'}
-                  </Button>
-                </div>
+                <button
+                  onClick={() => setMode('manual')}
+                  className="flex flex-col items-center gap-2 p-4 bg-carbon/10 rounded-xl text-carbon"
+                >
+                  <Keyboard className="w-8 h-8" />
+                  <span className="text-sm font-medium">Código manual</span>
+                </button>
               </div>
             </Card>
 
@@ -191,25 +177,101 @@ export function ValidatePage() {
           </div>
         )}
 
+        {/* Scanner View */}
+        {mode === 'scan' && (
+          <div className="space-y-4">
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-carbon">Escaneá el QR</h3>
+                <button 
+                  onClick={stopScanner}
+                  className="px-3 py-1 text-sm text-carbon/60 hover:text-carbon"
+                >
+                  Cerrar
+                </button>
+              </div>
+              
+              <div className="relative">
+                <div id="qr-reader" className="w-full rounded-xl overflow-hidden" />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-64 h-64 border-4 border-white rounded-2xl" />
+                </div>
+              </div>
+
+              <p className="text-sm text-carbon/60 text-center mt-3">
+                Apuntá la cámara al código QR del local
+              </p>
+            </Card>
+          </div>
+        )}
+
+        {/* Manual Entry */}
+        {mode === 'manual' && (
+          <div className="space-y-4">
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-carbon">Ingresá el código</h3>
+                <button 
+                  onClick={() => setMode('menu')}
+                  className="px-3 py-1 text-sm text-carbon/60 hover:text-carbon"
+                >
+                  Volver
+                </button>
+              </div>
+
+              {scanResult && (
+                <div className="mb-4 p-3 bg-green-50 rounded-xl">
+                  <p className="text-sm text-green-700">
+                    ✓ QR escaneado correctamente
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                  placeholder="Ej: PATITAS20"
+                  maxLength={20}
+                  className="w-full px-4 py-4 text-center text-2xl tracking-widest font-mono border-2 border-carbon/20 rounded-xl focus:outline-none focus:border-[#331B7E]"
+                />
+                
+                {error && (
+                  <p className="text-red-500 text-sm text-center">{error}</p>
+                )}
+
+                <Button
+                  onClick={getValidationCode}
+                  disabled={isLoading || !couponCode.trim()}
+                  className="w-full py-4 text-base"
+                >
+                  {isLoading ? 'Generando...' : 'Generar Código de Validación'}
+                </Button>
+              </div>
+            </Card>
+          </div>
+        )}
+
         {/* Generated Code */}
         {mode === 'code' && validationCode && (
           <div className="space-y-4">
-            <Card className="p-6 text-center">
+            <Card className="p-4 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
 
               <h3 className="font-bold text-lg text-carbon mb-1">¡Código Generado!</h3>
-              <p className="text-sm text-carbon/60 mb-6">
+              <p className="text-sm text-carbon/60 mb-4">
                 Mostrá este código al local para validar tu cupón
               </p>
 
               {/* QR Code */}
-              <div className="flex justify-center mb-6">
-                <div className="p-4 bg-white rounded-2xl border-4 border-primary/20">
+              <div className="flex justify-center mb-4">
+                <div className="p-4 bg-white rounded-2xl border-4" style={{ borderColor: 'rgba(51,27,126,0.2)' }}>
                   <QRCodeSVG 
                     value={validationCode.code} 
-                    size={180} 
+                    size={160} 
                     level="M"
                     bgColor="#ffffff"
                     fgColor="#331B7E"
@@ -218,8 +280,8 @@ export function ValidatePage() {
               </div>
 
               {/* Alphanumeric Code */}
-              <div className="bg-carbon/5 rounded-xl p-4 mb-4">
-                <p className="text-sm text-carbon/60 mb-2">O ingresá este código:</p>
+              <div className="bg-cream rounded-xl p-4 mb-4">
+                <p className="text-xs text-carbon/60 mb-2">Código de validación:</p>
                 <div className="flex items-center justify-center gap-3">
                   <p className="text-3xl tracking-widest font-mono font-bold text-carbon">
                     {validationCode.code}
@@ -235,7 +297,7 @@ export function ValidatePage() {
               </div>
 
               {/* Countdown */}
-              <div className="flex items-center justify-center gap-2 mb-6">
+              <div className="flex items-center justify-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-amber-500" />
                 <span className="text-sm text-carbon/60">Expira en:</span>
                 <span className="font-mono font-bold text-amber-600">
@@ -243,10 +305,9 @@ export function ValidatePage() {
                 </span>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-4">
                 <p className="text-sm text-green-700">
-                  ✓ El local puede verificar este código escaneando el QR 
-                  o ingresando el código manualmente en su panel.
+                  ✓ Mostrá este código o el QR al local para validar
                 </p>
               </div>
 
@@ -262,10 +323,6 @@ export function ValidatePage() {
                 Generar Otro Código
               </Button>
             </Card>
-
-            <p className="text-center text-xs text-carbon/40">
-              ¿Problemas? Acercate al local y mostrale el código del cupón directamente.
-            </p>
           </div>
         )}
       </div>
