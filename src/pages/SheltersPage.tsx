@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Heart, MapPin, MessageCircle, Search, PawPrint, ExternalLink } from 'lucide-react'
 import { Card, Badge, Button } from '../components/ui'
 
@@ -50,6 +51,7 @@ const mockShelters = [
 ]
 
 export function SheltersPage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
 
   const filteredShelters = mockShelters.filter(s => 
@@ -90,7 +92,11 @@ export function SheltersPage() {
       {/* Shelters List */}
       <div className="px-4 py-4 space-y-4">
         {filteredShelters.map((shelter) => (
-          <Card key={shelter.id} className="p-4">
+          <Card 
+            key={shelter.id} 
+            className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate(`/refugios/${shelter.id}`)}
+          >
             {/* Header with logo and name */}
             <div className="flex items-start gap-3 mb-3">
               <img 
