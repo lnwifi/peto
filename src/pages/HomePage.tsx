@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Heart, Star, Shield, Truck, ChevronRight, Sparkles, Flame, Award } from 'lucide-react'
+import { MapPin, Heart, Star, Shield, Truck, ChevronRight, Sparkles, Flame, Award, Building2, HandHeart } from 'lucide-react'
 import { Card, Badge, Avatar } from '../components/ui'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -236,6 +236,38 @@ export function HomePage() {
             ))}
           </div>
         </Card>
+      </section>
+
+      {/* Quick Access */}
+      <section className="px-4 mb-6">
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/refugios">
+            <Card className="p-4 h-full">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(51,27,126,0.1)' }}>
+                  <Building2 className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-carbon">Refugios</h3>
+                  <p className="text-xs text-carbon/60">Conocé a los refugios</p>
+                </div>
+              </div>
+            </Card>
+          </Link>
+          <Link to="/donaciones">
+            <Card className="p-4 h-full">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(242,113,49,0.1)' }}>
+                  <HandHeart className="w-6 h-6 text-secondary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-carbon">Donaciones</h3>
+                  <p className="text-xs text-carbon/60">Ayudá con causas</p>
+                </div>
+              </div>
+            </Card>
+          </Link>
+        </div>
       </section>
 
       {/* Featured Businesses */}
